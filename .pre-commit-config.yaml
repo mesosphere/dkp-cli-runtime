@@ -1,22 +1,27 @@
 repos:
 - repo: local
   hooks:
-  - id: lint-helm-chart
-    name: Lint Helm chart
-    entry: make helm.ct
-    files: ^chart/
+  - id: go-mod-tidy
+    name: go mod tidy
+    entry: make mod-tidy
+    files: "(.*\\.go$|go.mod|go.sum)"
     language: system
     stages: [commit]
     pass_filenames: false
+  - id: golangci-lint
+    name: golangci-lint
+    entry: make lint
+    language: system
+    files: "(.*\\.go$|go.mod|go.sum)"
+    pass_filenames: false
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.0.1
   hooks:
   - id: trailing-whitespace
     stages: [commit]
   - id: check-yaml
     args: ["-m", "--unsafe"]
     stages: [commit]
-    exclude: ^chart/
   - id: mixed-line-ending
     args: ["-f", "lf"]
     exclude: \.bat$
@@ -29,8 +34,6 @@ repos:
     stages: [commit]
   - id: check-merge-conflict
     stages: [commit]
-  - id: forbid-new-submodules
-    stages: [commit]
   - id: check-executables-have-shebangs
     stages: [commit]
   - id: check-symlinks
@@ -38,25 +41,26 @@ repos:
   - id: end-of-file-fixer
     stages: [commit]
 - repo: https://github.com/jorisroovers/gitlint
-  rev: v0.15.0
+  rev: v0.17.0
   hooks:
   - id: gitlint
     stages: [commit-msg]
 - repo: https://github.com/jumanjihouse/pre-commit-hooks
   rev: 2.1.5
   hooks:
-  - id: shellcheck
-    stages: [commit]
-    args: ["-e", "SC2211"]
-    additional_dependencies: []
   - id: shfmt
     stages: [commit]
     args: ["-s", "-i", "2"]
   - id: script-must-have-extension
     stages: [commit]
-- repo: https://github.com/golangci/golangci-lint
-  rev: v1.38.0
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.8.0.1
   hooks:
-  - id: golangci-lint
-    args: ["-c", ".golangci.yml", "--fix"]
+  - id: shellcheck
+    stages: [commit]
+    args: ["-e", "SC2211"]
+- repo: https://github.com/igorshubovych/markdownlint-cli
+  rev: v0.30.0
+  hooks:
+  - id: markdownlint
     stages: [commit]
