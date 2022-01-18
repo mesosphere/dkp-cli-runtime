@@ -41,13 +41,13 @@ func TestVersionCommand(t *testing.T) {
 
 		assertOutput(t, "default", versionGetter,
 			[]string{},
-			`version.Version{Major:"1", Minor:"2", GitVersion:"v1.2", GitCommit:"", GitTreeState:"", `+
-				`BuildDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n",
+			"v1.2\n",
 		)
 
-		assertOutput(t, "short", versionGetter,
-			[]string{"--short"},
-			"v1.2\n",
+		assertOutput(t, "long", versionGetter,
+			[]string{"--long"},
+			`version.Version{Major:"1", Minor:"2", GitVersion:"v1.2", GitCommit:"", GitTreeState:"", `+
+				`BuildDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n",
 		)
 
 		assertOutput(t, "JSON", versionGetter,
@@ -81,15 +81,15 @@ func TestVersionCommand(t *testing.T) {
 
 		assertOutput(t, "default", versionGetter,
 			[]string{},
+			"A: v1.2\nB: v2.3\n",
+		)
+
+		assertOutput(t, "long", versionGetter,
+			[]string{"--long"},
 			`A: version.Version{Major:"1", Minor:"2", GitVersion:"v1.2", GitCommit:"", GitTreeState:"", `+
 				`BuildDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n"+
 				`B: version.Version{Major:"2", Minor:"3", GitVersion:"v2.3", GitCommit:"", GitTreeState:"", `+
 				`BuildDate:"2021-12-14 12:52:12 UTC", GoVersion:"go1.17.7", Compiler:"gcc-go", Platform:"linux/arm64"}`+"\n",
-		)
-
-		assertOutput(t, "short", versionGetter,
-			[]string{"--short"},
-			"A: v1.2\nB: v2.3\n",
 		)
 
 		assertOutput(t, "JSON", versionGetter,

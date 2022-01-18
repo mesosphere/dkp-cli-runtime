@@ -54,7 +54,7 @@ type Versions = map[string]Version
 
 // options is a struct to support version command.
 type options struct {
-	Short  bool
+	Long   bool
 	Output string
 
 	outWriter   io.Writer
@@ -88,7 +88,7 @@ func NewCommandWithVersionGetter(output io.Writer, getVersions func() (Versions,
 			return options.Run()
 		},
 	}
-	cmd.Flags().BoolVar(&options.Short, "short", options.Short, "If true, print just the version number.")
+	cmd.Flags().BoolVar(&options.Long, "long", options.Long, "If true, print additional version information.")
 	cmd.Flags().StringVarP(&options.Output, "output", "o", options.Output, "One of 'yaml' or 'json'.")
 	return cmd
 }
@@ -119,7 +119,7 @@ func (o *options) Run() error {
 	case "":
 		switch v := v.(type) {
 		case Version:
-			if o.Short {
+			if !o.Long {
 				fmt.Fprintln(o.outWriter, v.GitVersion)
 			} else {
 				fmt.Fprintf(o.outWriter, "%#v\n", v)
@@ -127,7 +127,7 @@ func (o *options) Run() error {
 		case Versions:
 			keys := orderedKeys(v)
 			for _, name := range keys {
-				if o.Short {
+				if !o.Long {
 					fmt.Fprintln(o.outWriter, name+":", v[name].GitVersion)
 				} else {
 					fmt.Fprintf(o.outWriter, "%s: %#v\n", name, v[name])
