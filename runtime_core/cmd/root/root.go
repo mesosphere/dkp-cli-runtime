@@ -115,9 +115,12 @@ func configureKlog(o output.Output, verbosity int, vModule string) {
 	klog.SetLogger(output.NewOutputLogr(o))
 }
 
-func ensureTitleCaseForHelpFlagUsage(cmd *cobra.Command) {
-	cmd.Flags().BoolP("help", "h", false, "Help for "+cmd.Name())
-	for _, subCmd := range cmd.Commands() {
-		ensureTitleCaseForHelpFlagUsage(subCmd)
-	}
+func ensureTitleCaseForHelpFlagUsage(rootCmd *cobra.Command) {
+	rootCmdHelpFunc := rootCmd.HelpFunc()
+	rootCmd.SetHelpFunc(func(cmd *cobra.Command, s []string) {
+		if helpFlag := cmd.Flags().Lookup("help"); helpFlag != nil {
+			helpFlag.Usage = "Help for " + cmd.Name()
+		}
+		rootCmdHelpFunc(cmd, s)
+	})
 }
