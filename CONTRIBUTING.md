@@ -10,8 +10,9 @@ already have installed. If you wish to pre-install these tools, a convenience ma
 `make install-tools`.
 
 *NOTE*: On MacOS, please use current [GNU Coreutils](https://www.gnu.org/software/coreutils/coreutils.html), installed
-via [homebrew](https://brew.sh/) - see [here](https://formulae.brew.sh/formula/coreutils) for details, especially the
-instructions to correctly configure your `PATH` to include the `gnubin` directory.
+via [homebrew](https://brew.sh/) (see [here](https://formulae.brew.sh/formula/coreutils) for details, especially the
+instructions to correctly configure your `PATH` to include the `gnubin` directory) and [GNU Findutils](https://www.gnu.org/software/findutils/),
+installed via [homebrew](https://brew.sh/) (see [here](https://formulae.brew.sh/formula/findutils) for details).
 
 ## Installing pre-commit hook
 
