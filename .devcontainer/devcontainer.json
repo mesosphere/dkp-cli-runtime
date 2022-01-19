@@ -2,27 +2,31 @@
 // https://github.com/microsoft/vscode-dev-containers
 {
 	"name": "Go",
-	"build": { "dockerfile": "Dockerfile" },
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		"args": {
+			"ASDF_VERSION": "0.8.1",
+			"DOCKER_VERSION": "20.10.7"
+		}
+	},
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
 		"--security-opt",
 		"seccomp=unconfined"
 	],
+	"userEnvProbe": "loginInteractiveShell",
+	"postCreateCommand": "pre-commit install -t pre-commit -t commit-msg --install-hooks",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
-		"go.gopath": "/go"
+		"gopls": {
+			"experimentalWorkspaceModule": true,
+		}
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"golang.Go",
-		"ms-azuretools.vscode-docker"
-	],
+	]
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "make install",
-	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "vscode"
-	"updateRemoteUserUID": true
 }
