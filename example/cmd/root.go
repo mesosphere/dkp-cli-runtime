@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/cmd/root"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/output"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/cmd/get"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/options"
+	"github.com/mesosphere/dkp-cli-runtime/core/cmd/root"
+	"github.com/mesosphere/dkp-cli-runtime/core/output"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/cmd/get"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/options"
 )
 
 func NewCommand(in io.Reader, out, errOut io.Writer) (*cobra.Command, output.Output) {

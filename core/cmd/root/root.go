@@ -13,11 +13,11 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/cmd/help"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/cmd/version"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/output"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/plugin"
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/term"
+	"github.com/mesosphere/dkp-cli-runtime/core/cmd/help"
+	"github.com/mesosphere/dkp-cli-runtime/core/cmd/version"
+	"github.com/mesosphere/dkp-cli-runtime/core/output"
+	"github.com/mesosphere/dkp-cli-runtime/core/plugin"
+	"github.com/mesosphere/dkp-cli-runtime/core/term"
 )
 
 // RootOptions contains options configured in the root command.

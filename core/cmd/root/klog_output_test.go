@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/klog/v2"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/output"
+	"github.com/mesosphere/dkp-cli-runtime/core/output"
 )
 
 func TestKlogOutput(t *testing.T) {

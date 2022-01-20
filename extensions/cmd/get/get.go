@@ -14,7 +14,7 @@ import (
 	"k8s.io/cli-runtime/pkg/resource"
 	"k8s.io/client-go/rest"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/options"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/options"
 )
 
 // NewCommand creates a command for retrieving Kubernetes resources.

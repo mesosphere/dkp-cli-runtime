@@ -3,13 +3,13 @@ module github.com/mesosphere/dkp-cli-runtime/example
 go 1.17
 
 replace (
-	github.com/mesosphere/dkp-cli-runtime/runtime_core => ../runtime_core
-	github.com/mesosphere/dkp-cli-runtime/runtime_extensions => ../runtime_extensions
+	github.com/mesosphere/dkp-cli-runtime/core => ../core
+	github.com/mesosphere/dkp-cli-runtime/extensions => ../extensions
 )
 
 require (
-	github.com/mesosphere/dkp-cli-runtime/runtime_core v0.0.0-00010101000000-000000000000
-	github.com/mesosphere/dkp-cli-runtime/runtime_extensions v0.0.0-00010101000000-000000000000
+	github.com/mesosphere/dkp-cli-runtime/core v0.0.0-00010101000000-000000000000
+	github.com/mesosphere/dkp-cli-runtime/extensions v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.3.0
 	k8s.io/cli-runtime v0.22.4
 )

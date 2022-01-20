@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/cmd/root"
+	"github.com/mesosphere/dkp-cli-runtime/core/cmd/root"
 )
 
 func TestNewCommand(t *testing.T) {
