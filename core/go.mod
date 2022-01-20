@@ -1,4 +1,4 @@
-module github.com/mesosphere/dkp-cli-runtime/runtime_core
+module github.com/mesosphere/dkp-cli-runtime/core
 
 go 1.17
 

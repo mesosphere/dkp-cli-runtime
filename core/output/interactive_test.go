@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/output"
+	"github.com/mesosphere/dkp-cli-runtime/core/output"
 )
 
 const (

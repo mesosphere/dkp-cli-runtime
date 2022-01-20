@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"k8s.io/component-base/featuregate"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/options"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/options"
 )
 
 func TestFeatureGateOptions(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/plugin"
+	"github.com/mesosphere/dkp-cli-runtime/core/plugin"
 )
 
 func TestCommandsToSpecAndBack(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/options"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/options"
 )
 
 func TestClientOptions(t *testing.T) {

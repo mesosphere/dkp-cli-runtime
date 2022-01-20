@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/plugin"
+	"github.com/mesosphere/dkp-cli-runtime/core/plugin"
 )
 
 func TestDiscoveryCommand(t *testing.T) {

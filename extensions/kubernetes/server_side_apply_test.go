@@ -15,7 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_extensions/kubernetes"
+	"github.com/mesosphere/dkp-cli-runtime/extensions/kubernetes"
 )
 
 func TestServerSideApply(t *testing.T) {

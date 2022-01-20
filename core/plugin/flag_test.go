@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mesosphere/dkp-cli-runtime/runtime_core/plugin"
+	"github.com/mesosphere/dkp-cli-runtime/core/plugin"
 )
 
 func TestFlagsToSpecAndBack(t *testing.T) {

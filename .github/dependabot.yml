@@ -1,11 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/runtime_core"
+    directory: "/core"
     schedule:
       interval: "weekly"
   - package-ecosystem: "gomod"
-    directory: "/runtime_extensions"
+    directory: "/extensions"
     schedule:
       interval: "weekly"
   - package-ecosystem: "gomod"
