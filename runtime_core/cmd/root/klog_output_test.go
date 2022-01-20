@@ -53,13 +53,13 @@ func TestKlogOutput(t *testing.T) {
 	klog.V(1).Info("info message")
 	assert.Empty(o.msg)
 	assert.Nil(o.err)
-	assert.Equal(0, o.verbosity)
+	assert.Equal(1, o.verbosity)
 	o.Reset()
 
 	klog.V(2).Info("info message")
 	assert.Empty(o.msg)
 	assert.Nil(o.err)
-	assert.Equal(0, o.verbosity)
+	assert.Equal(2, o.verbosity)
 	o.Reset()
 
 	t.Run("verbosity 1", func(t *testing.T) {
