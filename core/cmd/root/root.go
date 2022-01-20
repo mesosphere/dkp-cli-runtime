@@ -51,9 +51,9 @@ func NewCommand(out, errOut io.Writer) (*cobra.Command, *RootOptions) {
 	}
 
 	profilingOpts.AddFlags(rootCmd.PersistentFlags())
-	outputVerbosity := -1
+	outputVerbosity := 0
 	klogVmodule := ""
-	rootCmd.PersistentFlags().IntVarP(&outputVerbosity, "verbose", "v", -1, "Output verbosity")
+	rootCmd.PersistentFlags().IntVarP(&outputVerbosity, "verbose", "v", 0, "Output verbosity")
 	rootCmd.PersistentFlags().StringVar(&klogVmodule, "vmodule", "",
 		"Comma-separated list of pattern=N settings for file-filtered logging")
 	rootCmd.PersistentFlags().MarkHidden("vmodule") // nolint:errcheck // flag just created, guaranteed to succeed
@@ -66,15 +66,16 @@ func NewCommand(out, errOut io.Writer) (*cobra.Command, *RootOptions) {
 	// make sure flags are parsed
 	// nolint:errcheck // will be parsed again by cobra
 	rootCmd.PersistentFlags().Parse(os.Args)
+	verbosityFlagSet := rootCmd.PersistentFlags().Changed("verbose")
 
 	rootOpts := &RootOptions{
 		Profiling: profilingOpts,
-		Output:    configureOutput(out, errOut, outputVerbosity, klogVmodule),
+		Output:    configureOutput(out, errOut, outputVerbosity, verbosityFlagSet, klogVmodule),
 	}
 	return rootCmd, rootOpts
 }
 
-func configureOutput(out, errOut io.Writer, verbosity int, klogVmodule string) output.Output {
+func configureOutput(out, errOut io.Writer, verbosity int, verbosityFlagSet bool, klogVmodule string) output.Output {
 	o := newOutput(out, errOut, verbosity)
 
 	// send output of standard logger to Info, verbosity 1
@@ -82,7 +83,7 @@ func configureOutput(out, errOut io.Writer, verbosity int, klogVmodule string) o
 	log.SetOutput(o.V(1).InfoWriter())
 
 	// send klog logs to output if verbosity flag is set
-	if verbosity >= 0 || klogVmodule != "" {
+	if verbosityFlagSet || klogVmodule != "" {
 		o := newOutput(out, errOut, math.MaxInt)
 		configureKlog(o, verbosity, klogVmodule)
 	} else {
@@ -93,9 +94,6 @@ func configureOutput(out, errOut io.Writer, verbosity int, klogVmodule string) o
 }
 
 func newOutput(out, errOut io.Writer, verbosity int) output.Output {
-	if verbosity < 0 {
-		verbosity = 0
-	}
 	if term.IsSmartTerminal(errOut) {
 		return output.NewInteractiveShell(out, errOut, verbosity)
 	} else {
