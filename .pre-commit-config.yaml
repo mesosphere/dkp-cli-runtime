@@ -67,3 +67,31 @@ repos:
   hooks:
   - id: markdownlint
     stages: [commit]
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.1.10
+  hooks:
+  - id: insert-license
+    name: License headers - Go
+    stages: [commit]
+    files: "(.*\\.go|go.mod)$"
+    args:
+      - --license-filepath
+      - header.txt
+      - --comment-style
+      - //
+  - id: insert-license
+    name: License headers - YAML and Makefiles
+    stages: [commit]
+    files: (^Makefile|\.(ya?ml|mk))$
+    args:
+      - --license-filepath
+      - header.txt
+  - id: insert-license
+    name: License headers - Markdown
+    stages: [commit]
+    files: \.md$
+    args:
+      - --license-filepath
+      - header.txt
+      - --comment-style
+      - <!--|| -->
