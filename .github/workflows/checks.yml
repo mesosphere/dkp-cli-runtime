@@ -1,7 +1,13 @@
-name: pull-request
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+name: checks
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   unit-test:
@@ -45,3 +51,5 @@ jobs:
       - uses: pre-commit/action@v2.0.3
         with:
           extra_args: --all-files
+        env:
+          SKIP: no-commit-to-branch
