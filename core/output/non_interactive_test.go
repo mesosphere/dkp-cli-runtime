@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -276,5 +277,25 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		assertEqualExceptTimestamp("<timestamp> INF  • working...", outputLines[3])
 		assertEqualExceptTimestamp("<timestamp> ERR an error err=<nil>", outputLines[4])
 		assertEqualExceptTimestamp("<timestamp> INF  ✗ working", outputLines[5])
+	})
+
+	t.Run("concurrent", func(t *testing.T) {
+		output := output.NewNonInteractiveShell(io.Discard, io.Discard, 0)
+
+		wg := sync.WaitGroup{}
+		doStuff := func() {
+			output.StartOperation("working")
+			output.Info("a message")
+			output.EndOperation(true)
+			output.StartOperation("working")
+			output.Error(nil, "an error")
+			output.EndOperation(false)
+			wg.Done()
+		}
+
+		wg.Add(2)
+		go doStuff()
+		go doStuff()
+		wg.Wait()
 	})
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -251,5 +252,25 @@ func TestInteractiveShellOutput(t *testing.T) {
 			finalLine := subLines[len(subLines)-1]
 			assert.Equal(expectedFinalOutputLines[i], finalLine)
 		}
+	})
+
+	t.Run("concurrent", func(t *testing.T) {
+		output := output.NewInteractiveShell(io.Discard, io.Discard, 0)
+
+		wg := sync.WaitGroup{}
+		doStuff := func() {
+			output.StartOperation("working")
+			output.Info("a message")
+			output.EndOperation(true)
+			output.StartOperation("working")
+			output.Error(nil, "an error")
+			output.EndOperation(false)
+			wg.Done()
+		}
+
+		wg.Add(2)
+		go doStuff()
+		go doStuff()
+		wg.Wait()
 	})
 }

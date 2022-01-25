@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -41,6 +42,7 @@ type nonInteractiveShellOutput struct {
 	verbosity     int
 	status        string
 	keysAndValues []interface{}
+	lock          sync.Mutex
 }
 
 func (o *nonInteractiveShellOutput) Info(msg string) {
@@ -71,11 +73,18 @@ func (o *nonInteractiveShellOutput) ErrorWriter() io.Writer {
 
 func (o *nonInteractiveShellOutput) StartOperation(status string) {
 	o.EndOperation(true)
+
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
 	o.status = status
 	o.Infof(" • %s...", o.status)
 }
 
 func (o *nonInteractiveShellOutput) EndOperation(success bool) {
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
 	if o.status == "" {
 		return
 	}
