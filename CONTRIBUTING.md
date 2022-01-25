@@ -1,3 +1,8 @@
+<!--
+ Copyright 2022 D2iQ, Inc. All rights reserved.
+ SPDX-License-Identifier: Apache-2.0
+ -->
+
 # Contributing
 
 If you would like to contribute to the DPK CLI Runtime, you're very welcome to open a GitHub pull request (PR).
