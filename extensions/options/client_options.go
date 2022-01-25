@@ -1,3 +1,6 @@
+// Copyright 2022 D2iQ, Inc. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package options
 
 import (
@@ -181,7 +184,6 @@ func (o *ClientOptions) ControllerRuntimeClientWithOptions(opts client.Options) 
 	}
 
 	kc, err := client.New(restConfig, opts)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Kubernetes client: %v", err)
 	}

@@ -1,3 +1,6 @@
+// Copyright 2022 D2iQ, Inc. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package plugin
 
 import "github.com/spf13/pflag"
@@ -64,6 +67,7 @@ type typedFlagValue string
 func (s typedFlagValue) Set(val string) error {
 	return nil
 }
+
 func (s typedFlagValue) Type() string {
 	return string(s)
 }

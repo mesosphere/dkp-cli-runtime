@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 GORELEASER_PARALLELISM ?= $(shell nproc --ignore=1)
 GORELEASER_DEBUG ?= false
 GOOS ?= $(shell go env GOOS 2>/dev/null)
