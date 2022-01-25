@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
 GIT_COMMIT := $(shell git rev-parse "HEAD^{commit}")

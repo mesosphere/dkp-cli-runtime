@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 # The GOPRIVATE environment variable controls which modules the go command considers
 # to be private (not available publicly) and should therefore not use the proxy or checksum database
 export GOPRIVATE ?= github.com/mesosphere

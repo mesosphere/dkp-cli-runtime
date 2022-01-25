@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 include make/all.mk
 
 ASDF_VERSION=0.8.1

@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 OS := $(shell uname -s)
 ifeq ($(OS), Darwin)
   BREW_PREFIX := $(shell brew --prefix)

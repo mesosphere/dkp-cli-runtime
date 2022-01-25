@@ -1,3 +1,6 @@
+# Copyright 2022 D2iQ, Inc. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 # Override this in your own top-level Makefile if this is in a different path in your repo.
 GO_TOOLS_FILE ?= $(REPO_ROOT)/.go-tools
 
