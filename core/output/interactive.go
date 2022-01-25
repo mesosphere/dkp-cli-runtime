@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 )
 
 const (
@@ -28,6 +29,7 @@ type interactiveShellOutput struct {
 	errOut    *spinner
 	verbosity int
 	status    string
+	lock      sync.Mutex
 }
 
 func (o *interactiveShellOutput) Info(msg string) {
@@ -67,12 +69,19 @@ func (o *interactiveShellOutput) ErrorWriter() io.Writer {
 
 func (o *interactiveShellOutput) StartOperation(status string) {
 	o.EndOperation(true)
+
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
 	o.status = status
 	o.errOut.SetSuffix(fmt.Sprintf(" %s ", o.status))
 	o.errOut.Start()
 }
 
 func (o *interactiveShellOutput) EndOperation(success bool) {
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
 	if o.status == "" {
 		return
 	}
