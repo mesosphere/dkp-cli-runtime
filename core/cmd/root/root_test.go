@@ -6,6 +6,7 @@ package root_test
 import (
 	"bytes"
 	"io"
+	"os"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -93,4 +94,58 @@ func TestEnsureTitleCaseForHelpFlagUsage(t *testing.T) {
 	rootCmd.SetArgs([]string{"help", "subcommand"})
 	rootCmd.Execute()
 	assert.Regexp("-h, --help\\W+Help for subcommand\n", output.String())
+}
+
+func TestVerbosity(t *testing.T) {
+	for _, test := range []struct {
+		name              string
+		flags             []string
+		regexesToMatch    []string
+		regexesToNotMatch []string
+	}{{
+		name:              "no flags",
+		regexesToMatch:    []string{"\\W+a\n"},
+		regexesToNotMatch: []string{"\\W+b\n"},
+	}, {
+		name:           "verbose only flag",
+		flags:          []string{"--verbose", "4"},
+		regexesToMatch: []string{"\\W+a\n", "\\W+b\n"},
+	}, {
+		name:           "verbose with arbitrary flag after",
+		flags:          []string{"--verbose", "4", "--wibble"},
+		regexesToMatch: []string{"\\W+a\n", "\\W+b\n"},
+	}, {
+		name:           "verbose with arbitrary flag before",
+		flags:          []string{"--wibble", "--verbose", "4"},
+		regexesToMatch: []string{"\\W+a\n", "\\W+b\n"},
+	}} {
+		t.Run(test.name, func(t *testing.T) {
+			assert := assert.New(t)
+
+			origOSArgs := os.Args
+			defer func() { os.Args = origOSArgs }()
+
+			output := bytes.Buffer{}
+
+			os.Args = append([]string{"root"}, test.flags...)
+			rootCmd, rootOpts := root.NewCommand(&output, &output)
+			b := false
+			rootCmd.Flags().BoolVar(&b, "wibble", false, "unused flag just for testing")
+			rootCmd.SetOut(&output)
+			rootCmd.SetErr(&output)
+			rootCmd.Run = func(cmd *cobra.Command, args []string) {
+				rootOpts.Output.Info("a")
+				rootOpts.Output.V(4).Info("b")
+			}
+
+			rootCmd.Execute()
+
+			for _, r := range test.regexesToMatch {
+				assert.Regexp(r, output.String())
+			}
+			for _, r := range test.regexesToNotMatch {
+				assert.NotRegexp(r, output.String())
+			}
+		})
+	}
 }
