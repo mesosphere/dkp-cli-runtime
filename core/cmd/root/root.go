@@ -14,6 +14,7 @@ import (
 
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"k8s.io/klog/v2"
 
 	"github.com/mesosphere/dkp-cli-runtime/core/cmd/help"
@@ -66,9 +67,14 @@ func NewCommand(out, errOut io.Writer) (*cobra.Command, *RootOptions) {
 	rootCmd.AddCommand(plugin.NewDiscoveryCommand(out, rootCmd))
 	rootCmd.SetHelpCommand(help.NewHelpCommandWrapper(rootCmd))
 
-	// make sure flags are parsed
-	// nolint:errcheck // will be parsed again by cobra
-	rootCmd.PersistentFlags().Parse(os.Args)
+	// Make sure flags are parsed, ignoring unknown flags at this stage. This ensures that the
+	// logging flags are initialized. The flags will be parsed again when the command is run, at
+	// which point unknown flags will trigger an error.
+	origParseErrorsWhitelist := rootCmd.PersistentFlags().ParseErrorsWhitelist
+	rootCmd.PersistentFlags().ParseErrorsWhitelist = pflag.ParseErrorsWhitelist{UnknownFlags: true}
+	_ = rootCmd.PersistentFlags().Parse(os.Args)
+	rootCmd.PersistentFlags().ParseErrorsWhitelist = origParseErrorsWhitelist
+
 	verbosityFlagSet := rootCmd.PersistentFlags().Changed("verbose")
 
 	rootOpts := &RootOptions{
