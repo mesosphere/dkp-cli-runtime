@@ -7,3 +7,20 @@ build:
 release:
   github:
   prerelease: auto
+  footer: |
+    ### Summary
+    **Full Changelog**: https://github.com/mesosphere/dkp-cli-runtime/compare/{{ .PreviousTag }}...{{ .Tag }}
+changelog:
+  use: github
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: 'Bug fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+  filters:
+    exclude:
+      - '^docs:'
+      - '^chore:'
+      - '^build:'
