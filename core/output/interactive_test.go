@@ -20,6 +20,7 @@ import (
 const (
 	termRed       = "\x1b[31m"
 	termGreen     = "\x1b[32m"
+	termYellow    = "\x1b[33m"
 	termReset     = "\x1b[0m"
 	termClearLine = "\x1b[2K"
 )
@@ -47,6 +48,23 @@ func TestInteractiveShellOutput(t *testing.T) {
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
+		errOut.Reset()
+
+		output.Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		output.Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(output.WarnWriter(), "warning message")
+		assert.Equal(len("warning message"), n)
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
 		errOut.Reset()
 
 		output.Error(fmt.Errorf("error message"), "an error happened")
@@ -90,6 +108,11 @@ func TestInteractiveShellOutput(t *testing.T) {
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
+
+		output.WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
 	})
 
 	t.Run("verbosity hidden", func(t *testing.T) {
@@ -108,6 +131,22 @@ func TestInteractiveShellOutput(t *testing.T) {
 		errOut.Reset()
 
 		_, err := io.WriteString(output.V(1).InfoWriter(), "info message")
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		_, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
@@ -146,6 +185,11 @@ func TestInteractiveShellOutput(t *testing.T) {
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
+		output.V(1).WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
 		output.V(1).StartOperation("working")
 		output.V(1).EndOperation(true)
 		assert.Empty(out.String())
@@ -173,6 +217,23 @@ func TestInteractiveShellOutput(t *testing.T) {
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
+		assert.Equal(len("warning message"), n)
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
 		errOut.Reset()
 
 		output.V(1).Error(fmt.Errorf("error message"), "an error happened")
@@ -220,6 +281,16 @@ func TestInteractiveShellOutput(t *testing.T) {
 		output.V(1).WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message    key=value\n", errOut.String())
+		errOut.Reset()
+
+		output.WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal(termYellow+"warning message    key=value"+termReset+"\n", errOut.String())
 		errOut.Reset()
 
 		output.WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
@@ -276,6 +347,7 @@ func TestInteractiveShellOutput(t *testing.T) {
 		doStuff := func() {
 			output.StartOperation("working")
 			output.Info("a message")
+			output.Warn("a warning")
 			output.EndOperation(true)
 			output.StartOperation("working")
 			output.Error(nil, "an error")
