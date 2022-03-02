@@ -21,18 +21,24 @@ func NewInteractiveShell(out, errOut io.Writer, verbosity int) Output {
 		out:       out,
 		errOut:    newSpinner(errOut),
 		verbosity: verbosity,
+		level:     0,
 	}
 }
 
 type interactiveShellOutput struct {
-	out       io.Writer
-	errOut    *spinner
-	verbosity int
-	status    string
-	lock      sync.Mutex
+	out           io.Writer
+	errOut        *spinner
+	verbosity     int
+	level         int
+	status        string
+	keysAndValues []interface{}
+	lock          sync.Mutex
 }
 
 func (o *interactiveShellOutput) Info(msg string) {
+	if o.level > 0 {
+		msg += formatKeysAndValues(o.keysAndValues)
+	}
 	fmt.Fprintln(o.errOut, msg)
 }
 
@@ -53,6 +59,9 @@ func (o *interactiveShellOutput) Error(err error, msg string) {
 		output = err.Error()
 	default:
 		output = fmt.Sprintf("%s: %s", msg, err.Error())
+	}
+	if o.level > 0 {
+		output += formatKeysAndValues(o.keysAndValues)
 	}
 	fmt.Fprintln(o.errOut, termRed+output+termReset)
 }
@@ -112,15 +121,22 @@ func (o *interactiveShellOutput) V(level int) Output {
 		return &noopOutput{Output: o}
 	}
 	return &interactiveShellOutput{
-		out:       o.out,
-		errOut:    o.errOut,
-		verbosity: o.verbosity,
+		out:           o.out,
+		errOut:        o.errOut,
+		verbosity:     o.verbosity,
+		level:         level,
+		keysAndValues: o.keysAndValues,
 	}
 }
 
 func (o *interactiveShellOutput) WithValues(keysAndValues ...interface{}) Output {
-	// keysAndValues ignored in interactive terminal output
-	return o
+	return &interactiveShellOutput{
+		out:           o.out,
+		errOut:        o.errOut,
+		verbosity:     o.verbosity,
+		level:         o.level,
+		keysAndValues: append(o.keysAndValues, keysAndValues...),
+	}
 }
 
 type msgWriter func(msg string)
