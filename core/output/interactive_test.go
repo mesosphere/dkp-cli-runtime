@@ -212,9 +212,24 @@ func TestInteractiveShellOutput(t *testing.T) {
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		output.V(1).WithValues("key", "value").Info("info message")
+		output.WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value").Info("info message")
+		assert.Empty(out.String())
+		assert.Equal("info message    key=value\n", errOut.String())
+		errOut.Reset()
+
+		output.WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
+		assert.Empty(out.String())
+		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
+		assert.Empty(out.String())
+		assert.Equal(termRed+"an error happened: error message    key=value"+termReset+"\n", errOut.String())
 		errOut.Reset()
 	})
 

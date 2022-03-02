@@ -25,6 +25,15 @@ func NewNonInteractiveShell(out, errOut io.Writer, verbosity int) Output {
 // .
 func formatExtended(level string, msg string, keysAndValues []interface{}) string {
 	result := fmt.Sprintf("%s %s %s", time.Now().Format("2006-01-02 15:04:05"), level, msg)
+	result += formatKeysAndValues(keysAndValues)
+	return result
+}
+
+func formatKeysAndValues(keysAndValues []interface{}) string {
+	if len(keysAndValues) == 0 {
+		return ""
+	}
+	result := "   "
 	for i := 1; i < len(keysAndValues); i += 2 {
 		key := keysAndValues[i-1]
 		value := fmt.Sprintf("%v", keysAndValues[i])
