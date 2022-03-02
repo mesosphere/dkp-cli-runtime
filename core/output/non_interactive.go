@@ -66,6 +66,18 @@ func (o *nonInteractiveShellOutput) InfoWriter() io.Writer {
 	return msgWriter(o.Info)
 }
 
+func (o *nonInteractiveShellOutput) Warn(msg string) {
+	fmt.Fprintln(o.errOut, formatExtended("WRN", msg, o.keysAndValues))
+}
+
+func (o *nonInteractiveShellOutput) Warnf(format string, args ...interface{}) {
+	o.Warn(fmt.Sprintf(format, args...))
+}
+
+func (o *nonInteractiveShellOutput) WarnWriter() io.Writer {
+	return msgWriter(o.Warn)
+}
+
 func (o *nonInteractiveShellOutput) Error(err error, msg string) {
 	fmt.Fprintln(o.errOut, formatExtended("ERR", msg, append([]interface{}{"err", err}, o.keysAndValues...)))
 }

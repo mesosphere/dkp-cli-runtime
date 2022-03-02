@@ -12,6 +12,9 @@ type noopOutput struct {
 func (o *noopOutput) Info(msg string)                                      {}
 func (o *noopOutput) Infof(format string, args ...interface{})             {}
 func (o *noopOutput) InfoWriter() io.Writer                                { return io.Discard }
+func (o *noopOutput) Warn(msg string)                                      {}
+func (o *noopOutput) Warnf(format string, args ...interface{})             {}
+func (o *noopOutput) WarnWriter() io.Writer                                { return io.Discard }
 func (o *noopOutput) Error(err error, msg string)                          {}
 func (o *noopOutput) Errorf(err error, format string, args ...interface{}) {}
 func (o *noopOutput) ErrorWriter() io.Writer                               { return io.Discard }

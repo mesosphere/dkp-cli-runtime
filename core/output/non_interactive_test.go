@@ -55,6 +55,23 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		assertEqualExceptTimestamp("<timestamp> INF info message\n", errOut.String())
 		errOut.Reset()
 
+		output.Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
+		errOut.Reset()
+
+		output.Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(output.WarnWriter(), "warning message")
+		assert.Equal(len("warning message"), n)
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
+		errOut.Reset()
+
 		output.Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
 		assertEqualExceptTimestamp(`<timestamp> ERR an error happened    err="error message"`+"\n", errOut.String())
@@ -107,6 +124,21 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		assert.Empty(out.String())
 		assertEqualExceptTimestamp(`<timestamp> INF info message    key="value=withequalsign"`+"\n", errOut.String())
 		errOut.Reset()
+
+		output.WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message    key=value\n", errOut.String())
+		errOut.Reset()
+
+		output.WithValues("key", "value with spaces").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp(`<timestamp> WRN warning message    key="value with spaces"`+"\n", errOut.String())
+		errOut.Reset()
+
+		output.WithValues("key", "value=withequalsign").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp(`<timestamp> WRN warning message    key="value=withequalsign"`+"\n", errOut.String())
+		errOut.Reset()
 	})
 
 	t.Run("verbosity hidden", func(t *testing.T) {
@@ -125,6 +157,22 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		errOut.Reset()
 
 		_, err := io.WriteString(output.V(1).InfoWriter(), "info message")
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		_, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
@@ -163,6 +211,11 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
+		output.V(1).WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
 		output.V(1).StartOperation("working")
 		output.V(1).EndOperation(true)
 		assert.Empty(out.String())
@@ -190,6 +243,23 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assertEqualExceptTimestamp("<timestamp> INF info message\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).Warnf("warning %s", "message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
+		assert.Equal(len("warning message"), n)
+		assert.NoError(err)
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message\n", errOut.String())
 		errOut.Reset()
 
 		output.V(1).Error(fmt.Errorf("error message"), "an error happened")
@@ -248,6 +318,26 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		output.WithValues("key", "value=withequalsign").V(1).Info("info message")
 		assert.Empty(out.String())
 		assertEqualExceptTimestamp(`<timestamp> INF info message    key="value=withequalsign"`+"\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp("<timestamp> WRN warning message    key=value\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value with spaces").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp(`<timestamp> WRN warning message    key="value with spaces"`+"\n", errOut.String())
+		errOut.Reset()
+
+		output.V(1).WithValues("key", "value=withequalsign").Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp(`<timestamp> WRN warning message    key="value=withequalsign"`+"\n", errOut.String())
+		errOut.Reset()
+
+		output.WithValues("key", "value=withequalsign").V(1).Warn("warning message")
+		assert.Empty(out.String())
+		assertEqualExceptTimestamp(`<timestamp> WRN warning message    key="value=withequalsign"`+"\n", errOut.String())
 		errOut.Reset()
 	})
 

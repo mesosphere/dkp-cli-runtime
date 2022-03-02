@@ -24,6 +24,24 @@ type Output interface {
 	//  io.WriteString(output.InfoWriter(), "namespace created")
 	InfoWriter() io.Writer
 
+	// Warn communicates a warning to the user.
+	//
+	// Example:
+	//  output.Warn("could not connect, retrying...")
+	Warn(msg string)
+
+	// Warnf communicates a warning to the user.
+	//
+	// Example:
+	//  output.Warnf("could not connect to %q, retrying...", service)
+	Warnf(format string, args ...interface{})
+
+	// WarnWriter returns a writer for warnings.
+	//
+	// Example:
+	//  io.WriteString(output.WarnWriter(), "could not connect, retrying...")
+	WarnWriter() io.Writer
+
 	// Error communicates an error to the users.
 	//
 	// Example:

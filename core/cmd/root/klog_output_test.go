@@ -170,6 +170,9 @@ func (o *outputMock) WithValues(keysAndValues ...interface{}) output.Output {
 
 func (o *outputMock) Infof(format string, args ...interface{})             {}
 func (o *outputMock) InfoWriter() io.Writer                                { return io.Discard }
+func (o *outputMock) Warn(msg string)                                      {}
+func (o *outputMock) Warnf(format string, args ...interface{})             {}
+func (o *outputMock) WarnWriter() io.Writer                                { return io.Discard }
 func (o *outputMock) Errorf(err error, format string, args ...interface{}) {}
 func (o *outputMock) ErrorWriter() io.Writer                               { return io.Discard }
 func (o *outputMock) StartOperation(status string)                         {}

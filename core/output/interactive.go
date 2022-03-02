@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	termRed   = "\x1b[31m"
-	termGreen = "\x1b[32m"
-	termReset = "\x1b[0m"
+	termRed    = "\x1b[31m"
+	termGreen  = "\x1b[32m"
+	termYellow = "\x1b[33m"
+	termReset  = "\x1b[0m"
 )
 
 func NewInteractiveShell(out, errOut io.Writer, verbosity int) Output {
@@ -50,6 +51,21 @@ func (o *interactiveShellOutput) Infof(format string, args ...interface{}) {
 
 func (o *interactiveShellOutput) InfoWriter() io.Writer {
 	return msgWriter(o.Info)
+}
+
+func (o *interactiveShellOutput) Warn(msg string) {
+	if o.level > 0 {
+		msg += formatKeysAndValues(o.keysAndValues)
+	}
+	fmt.Fprintln(o.errOut, termYellow+msg+termReset)
+}
+
+func (o *interactiveShellOutput) Warnf(format string, args ...interface{}) {
+	o.Warn(fmt.Sprintf(format, args...))
+}
+
+func (o *interactiveShellOutput) WarnWriter() io.Writer {
+	return msgWriter(o.Warn)
 }
 
 func (o *interactiveShellOutput) Error(err error, msg string) {
