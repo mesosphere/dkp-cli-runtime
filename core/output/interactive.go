@@ -26,9 +26,11 @@ func NewInteractiveShell(out, errOut io.Writer, verbosity int) Output {
 }
 
 type interactiveShellOutput struct {
-	out           io.Writer
-	errOut        *spinner
-	verbosity     int
+	out    io.Writer
+	errOut *spinner
+	// verbosity is the maximum V level that is printed to output
+	verbosity int
+	// level is the V level of this instance
 	level         int
 	status        string
 	keysAndValues []interface{}
