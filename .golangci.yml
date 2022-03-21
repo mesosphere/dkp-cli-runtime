@@ -39,7 +39,10 @@ linters-settings:
   lll:
     line-length: 120
   gci:
-    local-prefixes: github.com/mesosphere/dkp-cli
+    sections:
+      - standard
+      - default
+      - prefix(github.com/mesosphere/dkp-cli)
   depguard:
     list-type: blacklist
     packages:
