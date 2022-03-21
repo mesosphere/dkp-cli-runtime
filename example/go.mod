@@ -13,7 +13,7 @@ replace (
 require (
 	github.com/mesosphere/dkp-cli-runtime/core v0.0.0-00010101000000-000000000000
 	github.com/mesosphere/dkp-cli-runtime/extensions v0.0.0-00010101000000-000000000000
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.4.0
 	k8s.io/cli-runtime v0.23.4
 )
 
@@ -24,7 +24,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/go-errors/errors v1.0.1 // indirect
-	github.com/go-logr/logr v1.2.2 // indirect
+	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
@@ -52,7 +52,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/stretchr/testify v1.7.1 // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
@@ -70,7 +70,7 @@ require (
 	k8s.io/apimachinery v0.23.4 // indirect
 	k8s.io/client-go v0.23.4 // indirect
 	k8s.io/component-base v0.23.4 // indirect
-	k8s.io/klog/v2 v2.40.1 // indirect
+	k8s.io/klog/v2 v2.60.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65 // indirect
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect
 	sigs.k8s.io/controller-runtime v0.11.1 // indirect
