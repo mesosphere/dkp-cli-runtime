@@ -18,7 +18,7 @@ func TestVersionCommand(t *testing.T) {
 		Major:      "1",
 		Minor:      "2",
 		GitVersion: "v1.2",
-		BuildDate:  "2021-12-13 12:52:12 UTC",
+		CommitDate: "2021-12-13 12:52:12 UTC",
 		GoVersion:  "go1.17.5",
 		Compiler:   "gc",
 		Platform:   "linux/amd64",
@@ -28,7 +28,7 @@ func TestVersionCommand(t *testing.T) {
 		Major:      "2",
 		Minor:      "3",
 		GitVersion: "v2.3",
-		BuildDate:  "2021-12-14 12:52:12 UTC",
+		CommitDate: "2021-12-14 12:52:12 UTC",
 		GoVersion:  "go1.17.7",
 		Compiler:   "gcc-go",
 		Platform:   "linux/arm64",
@@ -50,7 +50,7 @@ func TestVersionCommand(t *testing.T) {
 		assertOutput(t, "long", versionGetter,
 			[]string{"--long"},
 			`version.Version{Major:"1", Minor:"2", GitVersion:"v1.2", GitCommit:"", GitTreeState:"", `+
-				`BuildDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n",
+				`CommitDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n",
 		)
 
 		assertOutput(t, "JSON", versionGetter,
@@ -90,9 +90,9 @@ func TestVersionCommand(t *testing.T) {
 		assertOutput(t, "long", versionGetter,
 			[]string{"--long"},
 			`A: version.Version{Major:"1", Minor:"2", GitVersion:"v1.2", GitCommit:"", GitTreeState:"", `+
-				`BuildDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n"+
+				`CommitDate:"2021-12-13 12:52:12 UTC", GoVersion:"go1.17.5", Compiler:"gc", Platform:"linux/amd64"}`+"\n"+
 				`B: version.Version{Major:"2", Minor:"3", GitVersion:"v2.3", GitCommit:"", GitTreeState:"", `+
-				`BuildDate:"2021-12-14 12:52:12 UTC", GoVersion:"go1.17.7", Compiler:"gcc-go", Platform:"linux/arm64"}`+"\n",
+				`CommitDate:"2021-12-14 12:52:12 UTC", GoVersion:"go1.17.7", Compiler:"gcc-go", Platform:"linux/arm64"}`+"\n",
 		)
 
 		assertOutput(t, "JSON", versionGetter,
@@ -130,14 +130,14 @@ const jsonOutputSingle = `{
   "gitVersion": "v1.2",
   "gitCommit": "",
   "gitTreeState": "",
-  "buildDate": "2021-12-13 12:52:12 UTC",
+  "commitDate": "2021-12-13 12:52:12 UTC",
   "goVersion": "go1.17.5",
   "compiler": "gc",
   "platform": "linux/amd64"
 }
 `
 
-const yamlOutputSingle = `buildDate: 2021-12-13 12:52:12 UTC
+const yamlOutputSingle = `commitDate: 2021-12-13 12:52:12 UTC
 compiler: gc
 gitCommit: ""
 gitTreeState: ""
@@ -156,7 +156,7 @@ const jsonOutputMulti = `{
     "gitVersion": "v1.2",
     "gitCommit": "",
     "gitTreeState": "",
-    "buildDate": "2021-12-13 12:52:12 UTC",
+    "commitDate": "2021-12-13 12:52:12 UTC",
     "goVersion": "go1.17.5",
     "compiler": "gc",
     "platform": "linux/amd64"
@@ -167,7 +167,7 @@ const jsonOutputMulti = `{
     "gitVersion": "v2.3",
     "gitCommit": "",
     "gitTreeState": "",
-    "buildDate": "2021-12-14 12:52:12 UTC",
+    "commitDate": "2021-12-14 12:52:12 UTC",
     "goVersion": "go1.17.7",
     "compiler": "gcc-go",
     "platform": "linux/arm64"
@@ -176,7 +176,7 @@ const jsonOutputMulti = `{
 `
 
 const yamlOutputMulti = `A:
-  buildDate: 2021-12-13 12:52:12 UTC
+  commitDate: 2021-12-13 12:52:12 UTC
   compiler: gc
   gitCommit: ""
   gitTreeState: ""
@@ -186,7 +186,7 @@ const yamlOutputMulti = `A:
   minor: "2"
   platform: linux/amd64
 B:
-  buildDate: 2021-12-14 12:52:12 UTC
+  commitDate: 2021-12-14 12:52:12 UTC
   compiler: gcc-go
   gitCommit: ""
   gitTreeState: ""
