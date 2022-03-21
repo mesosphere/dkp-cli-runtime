@@ -39,7 +39,8 @@ func TestFlagsToSpecAndBack(t *testing.T) {
 func assertFlagsEqual(t *testing.T, expected, actual *pflag.Flag) {
 	assert := assert.New(t)
 	assert.Equal(expected.Value.Type(), actual.Value.Type())
-	// compare everything but the Value
+	assert.Equal(expected.Value.String(), actual.Value.String())
+	// compare everything but the Value (different type)
 	actual.Value = expected.Value
 	assert.Equal(expected, actual)
 }

@@ -47,10 +47,13 @@ func SpecsFromFlagset(flags *pflag.FlagSet) []FlagSpec {
 // ToFlag creates a pflag.Flag based on this FlagSpec.
 func (spec FlagSpec) ToFlag() *pflag.Flag {
 	return &pflag.Flag{
-		Name:                spec.Name,
-		Shorthand:           spec.Shorthand,
-		Usage:               spec.Usage,
-		Value:               typedFlagValue(spec.Type),
+		Name:      spec.Name,
+		Shorthand: spec.Shorthand,
+		Usage:     spec.Usage,
+		Value: &typedFlagValue{
+			typeName: spec.Type,
+			value:    spec.DefaultValue,
+		},
 		DefValue:            spec.DefaultValue,
 		NoOptDefVal:         spec.NoOptDefaultValue,
 		Deprecated:          spec.Deprecated,
@@ -62,14 +65,20 @@ func (spec FlagSpec) ToFlag() *pflag.Flag {
 
 // typedFlagValue is a dummy pflag.Value that knows its type. That's all we need here.
 // All standard pflag.Value implementations are private.
-type typedFlagValue string
+type typedFlagValue struct {
+	typeName string
+	value    string
+}
 
-func (s typedFlagValue) Set(val string) error {
+func (s *typedFlagValue) Set(val string) error {
+	s.value = val
 	return nil
 }
 
 func (s typedFlagValue) Type() string {
-	return string(s)
+	return s.typeName
 }
 
-func (s typedFlagValue) String() string { return "" }
+func (s typedFlagValue) String() string {
+	return s.value
+}
