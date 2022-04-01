@@ -136,7 +136,7 @@ func (o *interactiveShellOutput) Enabled(level int) bool {
 
 func (o *interactiveShellOutput) V(level int) Output {
 	if !o.Enabled(level) {
-		return &noopOutput{Output: o}
+		return &DiscardingOutput{}
 	}
 	return &interactiveShellOutput{
 		out:           o.out,
