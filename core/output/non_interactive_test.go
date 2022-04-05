@@ -388,4 +388,20 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 		go doStuff()
 		wg.Wait()
 	})
+
+	t.Run("message level should not change the maximum allowed verbosity", func(t *testing.T) {
+		out := bytes.Buffer{}
+		errOut := bytes.Buffer{}
+		maxAllowedVerbosity := 1
+
+		o := output.NewNonInteractiveShell(&out, &errOut, maxAllowedVerbosity)
+
+		o.V(maxAllowedVerbosity - 1).V(maxAllowedVerbosity).Info("test")
+		assertEqualExceptTimestamp("<timestamp> INF test\n", errOut.String())
+		errOut.Reset()
+
+		o.V(maxAllowedVerbosity + 1).V(maxAllowedVerbosity).Info("test")
+		assertEqualExceptTimestamp("<timestamp> INF test\n", errOut.String())
+		errOut.Reset()
+	})
 }
