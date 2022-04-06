@@ -396,12 +396,14 @@ func TestNonInteractiveShellOutput(t *testing.T) {
 
 		o := output.NewNonInteractiveShell(&out, &errOut, maxAllowedVerbosity)
 
+		// Decreasing the level should not decrease the max allowed verbosity.
 		o.V(maxAllowedVerbosity - 1).V(maxAllowedVerbosity).Info("test")
 		assertEqualExceptTimestamp("<timestamp> INF test\n", errOut.String())
 		errOut.Reset()
 
-		o.V(maxAllowedVerbosity + 1).V(maxAllowedVerbosity).Info("test")
-		assertEqualExceptTimestamp("<timestamp> INF test\n", errOut.String())
+		// Increasing the level should not increase the max allowed verbosity.
+		o.V(maxAllowedVerbosity + 1).V(maxAllowedVerbosity + 1).Info("should not be output")
+		assert.Equal("", errOut.String())
 		errOut.Reset()
 	})
 }
