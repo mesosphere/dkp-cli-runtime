@@ -5,6 +5,8 @@ package output
 
 import "io"
 
+// noopOutput discards the output at a specific message level, but preserves the desired verbosity, by delegating V() to
+// the embedded Output.
 type noopOutput struct {
 	Output
 }
