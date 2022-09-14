@@ -60,7 +60,7 @@ func NewCommand(out, errOut io.Writer) (*cobra.Command, *RootOptions) {
 	rootCmd.PersistentFlags().IntVarP(&outputVerbosity, "verbose", "v", 0, "Output verbosity")
 	rootCmd.PersistentFlags().StringVar(&klogVmodule, "vmodule", "",
 		"Comma-separated list of pattern=N settings for file-filtered logging")
-	rootCmd.PersistentFlags().MarkHidden("vmodule") // nolint:errcheck // flag just created, guaranteed to succeed
+	rootCmd.PersistentFlags().MarkHidden("vmodule") //nolint:errcheck // flag just created, guaranteed to succeed
 	ensureTitleCaseForHelpFlagUsage(rootCmd)
 
 	rootCmd.AddCommand(version.NewCommand(out))

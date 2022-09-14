@@ -6,7 +6,7 @@ package term
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,7 +23,7 @@ func TestIsTerminal(t *testing.T) {
 		t.Fatalf("IsTerminal should be false for bytes.Buffer")
 	}
 	// test a file
-	f, err := ioutil.TempFile("", "kind-isterminal")
+	f, err := os.CreateTemp("", "kind-isterminal")
 	if err != nil {
 		t.Fatalf("Failed to create tempfile %v", err)
 	}
