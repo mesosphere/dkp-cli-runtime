@@ -7,7 +7,6 @@ run:
 linters:
   disable-all: true
   enable:
-    - deadcode
     - depguard
     - errcheck
     - gochecknoinits
@@ -26,13 +25,11 @@ linters:
     - nolintlint
     - prealloc
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
 
 linters-settings:

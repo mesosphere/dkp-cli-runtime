@@ -16,9 +16,9 @@ import (
 //
 // Idiomatic use is as first lines in your main:
 //
-// 	if symlinkexechandler.HandleExec("simple") {
-// 		return
-// 	}
+//	if symlinkexechandler.HandleExec("simple") {
+//		return
+//	}
 func HandleExec(prefixToStrip string) bool {
 	if !strings.HasSuffix(prefixToStrip, "-") {
 		prefixToStrip += "-"

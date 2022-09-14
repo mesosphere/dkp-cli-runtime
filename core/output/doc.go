@@ -20,42 +20,42 @@ Usage examples
 
 Displaying information and errors:
 
-    // optional output only displayed with higher verbosity
-    output.V(1).Info("kubeconfig read from file")
-    err := createNameSpace(namespaceName)
-    if err != nil {
-        output.Errorf(err, "failed to create namespace %q", namespaceName)
-        os.Exit(1)
-    }
-    output.Infof("namespace %q created" namespaceName)
+	// optional output only displayed with higher verbosity
+	output.V(1).Info("kubeconfig read from file")
+	err := createNameSpace(namespaceName)
+	if err != nil {
+	    output.Errorf(err, "failed to create namespace %q", namespaceName)
+	    os.Exit(1)
+	}
+	output.Infof("namespace %q created" namespaceName)
 
 Long-running operations:
 
-    output.StartOperation("installing packages")
-    for _, package := range packages {
-        err := installPackage(package)
-        if err != nil {
-            output.EndOperation(false)
-            output.Errorf(err, "failed to install package %q", package.Name)
-            os.Exit(1)
-        }
-        output.V(1).Infof("package %q installed", package.Name)
-    }
-    output.EndOperation(true)
-    output.Info("All packages installed successfully")
+	output.StartOperation("installing packages")
+	for _, package := range packages {
+	    err := installPackage(package)
+	    if err != nil {
+	        output.EndOperation(false)
+	        output.Errorf(err, "failed to install package %q", package.Name)
+	        os.Exit(1)
+	    }
+	    output.V(1).Infof("package %q installed", package.Name)
+	}
+	output.EndOperation(true)
+	output.Info("All packages installed successfully")
 
 Output results:
 
-    pods, err := getPods(namespaceName)
-    if err != nil {
-        output.Error(err, "failed to get pods")
-        os.Exit(1)
-    }
-    if outputJSON {
-        output.Result(pods.ToJSON())
-    } else {
-        output.Result(pods.String())
-    }
+	pods, err := getPods(namespaceName)
+	if err != nil {
+	    output.Error(err, "failed to get pods")
+	    os.Exit(1)
+	}
+	if outputJSON {
+	    output.Result(pods.ToJSON())
+	} else {
+	    output.Result(pods.String())
+	}
 
 What's the difference between Info() and Result()?
 

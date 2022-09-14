@@ -1,4 +1,4 @@
-golang 1.17.8
-golangci-lint 1.44.2
-goreleaser 1.6.3
-shfmt 3.4.3
+golang 1.19.1
+golangci-lint 1.49.0
+goreleaser 1.11.2
+shfmt 3.5.1
