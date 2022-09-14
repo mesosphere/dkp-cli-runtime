@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/mesosphere/dkp-cli-runtime/core/plugin"
 )
@@ -62,6 +63,36 @@ func TestCommandsToSpecAndBack(t *testing.T) {
 		cmdWithSubCommands.AddCommand(subCmd2)
 
 		testCommandSpec(t, cmdWithSubCommands)
+	})
+
+	t.Run("skip annotated subcommands", func(t *testing.T) {
+		cmdWithSubCommands := &cobra.Command{
+			Use:   "with_subcommands",
+			Short: "a command with subcommands",
+		}
+		cmdWithSubCommands.Flags().String("flag1", "", "usage")
+		cmdWithSubCommands.PersistentFlags().String("flag2", "", "usage")
+
+		subCmd := &cobra.Command{
+			Use: "subcommand",
+		}
+		subCmd.Flags().String("flag3", "", "usage")
+		cmdWithSubCommands.AddCommand(subCmd)
+
+		subCmd2 := &cobra.Command{
+			Use: "subcommand2",
+			Annotations: map[string]string{
+				"exclude-from-dkp-cli": "true",
+			},
+		}
+		subCmd2.Flags().String("flag4", "", "usage")
+		cmdWithSubCommands.AddCommand(subCmd2)
+
+		spec := plugin.SpecFromCommand(cmdWithSubCommands)
+		runE := func(cmd *cobra.Command, args []string) error { return nil }
+		cmdFromSpec := spec.ToCommand(runE)
+		require.Len(t, cmdFromSpec.Commands(), 1)
+		assert.Equal(t, cmdFromSpec.Commands()[0].Use, "subcommand")
 	})
 }
 
