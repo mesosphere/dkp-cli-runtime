@@ -60,6 +60,9 @@ func SpecFromCommand(cmd *cobra.Command) CommandSpec {
 		case DiscoveryCommandName, "completion":
 			continue
 		}
+		if subCmd.Annotations["exclude-from-dkp-cli"] == "true" {
+			continue
+		}
 		result.SubCommands = append(result.SubCommands, SpecFromCommand(subCmd))
 	}
 	return result
