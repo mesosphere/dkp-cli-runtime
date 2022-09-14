@@ -223,7 +223,9 @@ func (c *MockedClient) Patch(
 	return c.returnErr
 }
 
-func (c *MockedClient) Get(ctx context.Context, key client.ObjectKey, obj client.Object) error {
+func (c *MockedClient) Get(
+	ctx context.Context, key client.ObjectKey, obj client.Object, opts ...client.GetOption,
+) error {
 	return nil
 }
 
