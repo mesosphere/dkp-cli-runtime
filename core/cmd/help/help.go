@@ -4,11 +4,17 @@
 package help
 
 import (
+	"errors"
 	"fmt"
+	htmltemplate "html/template"
+	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+
+	"github.com/mesosphere/dkp-cli-runtime/core/customdocs"
 )
 
 // NewHelpCommandWrapper creates an enhanced help command supporting multiple output formats.
@@ -17,10 +23,11 @@ func NewHelpCommandWrapper(rootCmd *cobra.Command) *cobra.Command {
 		outputFormat  string
 		showTree      bool
 		treeOutputDir string
+		templateFile  string
 	)
 
 	helpCmd := &cobra.Command{
-		Use:   "help [-o {yaml|yml|markdown|md}] [command]",
+		Use:   "help [-o {yaml|yml|markdown|md|template|htmltemplate}] [command]",
 		Short: "Help about any command",
 		Long: `Help provides help for any command in the application.
 Simply type ` + rootCmd.Name() + ` help [path to command] for full details.`,
@@ -41,6 +48,28 @@ Simply type ` + rootCmd.Name() + ` help [path to command] for full details.`,
 						return doc.GenMarkdownTree(cmd, treeOutputDir)
 					}
 					return doc.GenMarkdown(cmd, rootCmd.OutOrStdout())
+				case "template", "htmltemplate":
+					if templateFile == "" {
+						return errors.New("a template file (--template) is required with --format=" + outputFormat)
+					}
+					var err error
+					var tpl customdocs.Template
+					if outputFormat == "htmltemplate" {
+						tpl, err = htmltemplate.New(filepath.Base(templateFile)).Funcs(htmltemplate.FuncMap{
+							//nolint:gosec // helper for XHTML
+							"CDATA": func(text string) htmltemplate.HTML { return htmltemplate.HTML("<![CDATA[" + text + "]]>") },
+						}).ParseFiles(templateFile)
+					} else {
+						tpl, err = template.ParseFiles(templateFile)
+					}
+					if err != nil {
+						return err
+					}
+
+					if showTree {
+						return customdocs.GenTreeWithTemplate(cmd, treeOutputDir, tpl)
+					}
+					return customdocs.GenWithTemplate(cmd, rootCmd.OutOrStderr(), tpl)
 				case "":
 					cmd.InitDefaultHelpFlag()
 					return cmd.Help()
@@ -76,6 +105,7 @@ Simply type ` + rootCmd.Name() + ` help [path to command] for full details.`,
 	helpCmd.Flags().StringVarP(&outputFormat, "output", "o", "", "Output format for help")
 	helpCmd.Flags().BoolVarP(&showTree, "tree", "t", false, "Generate help for full command tree")
 	helpCmd.Flags().StringVarP(&treeOutputDir, "output-dir", "d", "", "Output for full command tree if --tree=true")
+	helpCmd.Flags().StringVar(&templateFile, "template", "", "template file to use if --format=template or htmltemplate")
 
 	return helpCmd
 }
