@@ -1,0 +1,39 @@
+# {{.Name}}
+{{.Short}}
+
+{{if .Long -}}
+### Synopsis:
+{{.Long}}
+{{end -}}
+
+{{if .UseLine}}
+{{template "code" .UseLine}}
+{{end -}}
+
+{{if .Example}}
+### Examples:
+{{.Example}}
+{{end -}}
+
+{{if .Flags}}
+### Options:
+{{template "code" .Flags}}
+{{end -}}
+
+{{if .ParentFlags}}
+### Options inherited from parent commands:
+{{template "code" .ParentFlags}}
+{{end -}}
+
+{{if .Links}}
+### SEE ALSO:
+{{- range .Links}}
+* [{{.Name}}]: {{.Short}}
+{{- end}}
+{{end}}
+
+{{- define "code" -}}
+```
+{{.}}
+```
+{{- end -}}

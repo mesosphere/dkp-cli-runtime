@@ -1,0 +1,22 @@
+# example command sub
+Example sub-sub-command
+
+
+```
+example command sub [flags]
+```
+
+### Options:
+```
+  -h, --help   help for sub
+
+```
+
+### Options inherited from parent commands:
+```
+      --global   a global flag
+
+```
+
+### SEE ALSO:
+* [example command]: Example sub-command
