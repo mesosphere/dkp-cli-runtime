@@ -1,0 +1,13 @@
+# example
+Example command
+
+
+### Options:
+```
+      --global   a global flag
+  -h, --help     help for example
+
+```
+
+### SEE ALSO:
+* [example command]: Example sub-command

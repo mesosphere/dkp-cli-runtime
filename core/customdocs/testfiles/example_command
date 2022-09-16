@@ -1,0 +1,29 @@
+# example command
+Example sub-command
+
+### Synopsis:
+This is just a sample for testing doc generation
+
+```
+example command [flags]
+```
+
+### Examples:
+Usage example
+
+### Options:
+```
+  -h, --help           help for command
+      --local string   a local flag (default "default")
+
+```
+
+### Options inherited from parent commands:
+```
+      --global   a global flag
+
+```
+
+### SEE ALSO:
+* [example]: Example command
+* [example command sub]: Example sub-sub-command
