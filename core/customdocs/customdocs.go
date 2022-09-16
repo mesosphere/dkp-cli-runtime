@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Template interface is implemented by core packages text/template and html/template.
 type Template interface {
 	Execute(wr io.Writer, data interface{}) error
 }

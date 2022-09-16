@@ -4,7 +4,6 @@
 package help
 
 import (
-	"errors"
 	"fmt"
 	htmltemplate "html/template"
 	"path/filepath"
@@ -49,23 +48,10 @@ Simply type ` + rootCmd.Name() + ` help [path to command] for full details.`,
 					}
 					return doc.GenMarkdown(cmd, rootCmd.OutOrStdout())
 				case "template", "htmltemplate":
-					if templateFile == "" {
-						return errors.New("a template file (--template) is required with --format=" + outputFormat)
-					}
-					var err error
-					var tpl customdocs.Template
-					if outputFormat == "htmltemplate" {
-						tpl, err = htmltemplate.New(filepath.Base(templateFile)).Funcs(htmltemplate.FuncMap{
-							//nolint:gosec // helper for XHTML
-							"CDATA": func(text string) htmltemplate.HTML { return htmltemplate.HTML("<![CDATA[" + text + "]]>") },
-						}).ParseFiles(templateFile)
-					} else {
-						tpl, err = template.ParseFiles(templateFile)
-					}
+					tpl, err := loadTemplate(templateFile, outputFormat)
 					if err != nil {
 						return err
 					}
-
 					if showTree {
 						return customdocs.GenTreeWithTemplate(cmd, treeOutputDir, tpl)
 					}
@@ -108,4 +94,21 @@ Simply type ` + rootCmd.Name() + ` help [path to command] for full details.`,
 	helpCmd.Flags().StringVar(&templateFile, "template", "", "template file to use if --format=template or htmltemplate")
 
 	return helpCmd
+}
+
+func loadTemplate(templateFile string, format string) (customdocs.Template, error) {
+	if templateFile == "" {
+		return nil, fmt.Errorf("a template file (--template) is required with --format=%s", format)
+	}
+	switch format {
+	case "htmltemplate":
+		return htmltemplate.New(filepath.Base(templateFile)).Funcs(htmltemplate.FuncMap{
+			//nolint:gosec // helper for XHTML
+			"CDATA": func(text string) htmltemplate.HTML { return htmltemplate.HTML("<![CDATA[" + text + "]]>") },
+		}).ParseFiles(templateFile)
+	case "template":
+		return template.ParseFiles(templateFile)
+	default:
+		return nil, fmt.Errorf("unsupported template format: %q", format)
+	}
 }
