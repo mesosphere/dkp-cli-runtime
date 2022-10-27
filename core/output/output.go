@@ -75,6 +75,34 @@ type Output interface {
 	//  output.EndOperation(true)
 	StartOperation(status string)
 
+	// StartOperationWithProgress communicates the beginning of a long-running operation.
+	// If running in a terminal, a progress animation will be shown. Starting a
+	// new operation ends any previously running operation.
+	// This behaves identical to StartOperation above but with an extra progress bar with time elapsed.
+	//
+	// Example:
+	//  gauge := &ProgressGauge{}
+	//  gauge.SetStatus("descriptive status that need not be static")
+	//  gauge.SetCapacity(10)
+	//  output.StartOperationWithProgress(gauge)
+	//  for (int i = 0; i < 10; i++) {
+	//     err = longWaitFunction()
+	//     if err != nil {
+	//  	 output.EndOperation(false)
+	//		 output.Error(err, "")
+	//  	 return
+	//     }
+	//     gauge.Inc()
+	//  }
+	//
+	//  if err != nil {
+	//  	output.EndOperation(false)
+	//  	output.Error(err, "")
+	//  	return
+	//  }
+	//  output.EndOperation(true)
+	StartOperationWithProgress(gauge *ProgressGauge)
+
 	// EndOperation communicates the end of a long-running operation, either because
 	// the operation completed successfully or failed (parameter success).
 	//
