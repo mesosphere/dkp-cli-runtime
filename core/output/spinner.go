@@ -42,6 +42,7 @@ type spinner struct {
 	ticker  *time.Ticker // signals that it is time to write a frame
 	prefix  string
 	suffix  string
+	gauge   *ProgressGauge
 	// format string used to write a frame, depends on the host OS / terminal
 	frameFormat string
 }
@@ -82,6 +83,12 @@ func (s *spinner) SetSuffix(suffix string) {
 	s.suffix = suffix
 }
 
+func (s *spinner) SetProgressGauge(gauge *ProgressGauge) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.gauge = gauge
+}
+
 // Start starts the spinner running.
 func (s *spinner) Start() {
 	s.mu.Lock()
@@ -94,6 +101,7 @@ func (s *spinner) Start() {
 	s.running = true
 	// start / create a frame ticker
 	s.ticker = time.NewTicker(time.Millisecond * 100) //nolint:gomnd // OK to use 100ms here.
+	s.gauge.InitStartTime()
 	// spin in the background
 	go func() {
 		// write frames forever (until signaled to stop)
@@ -115,7 +123,11 @@ func (s *spinner) Start() {
 					func() {
 						s.mu.Lock()
 						defer s.mu.Unlock()
-						fmt.Fprintf(s.writer, s.frameFormat, s.prefix, frame, s.suffix)
+						suffix := s.suffix
+						if s.gauge.IsReady() {
+							suffix = s.gauge.String()
+						}
+						fmt.Fprintf(s.writer, s.frameFormat, s.prefix, frame, suffix)
 					}()
 				}
 			}

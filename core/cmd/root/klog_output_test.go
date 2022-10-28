@@ -168,15 +168,16 @@ func (o *outputMock) WithValues(keysAndValues ...interface{}) output.Output {
 	return o
 }
 
-func (o *outputMock) Infof(format string, args ...interface{})             {}
-func (o *outputMock) InfoWriter() io.Writer                                { return io.Discard }
-func (o *outputMock) Warn(msg string)                                      {}
-func (o *outputMock) Warnf(format string, args ...interface{})             {}
-func (o *outputMock) WarnWriter() io.Writer                                { return io.Discard }
-func (o *outputMock) Errorf(err error, format string, args ...interface{}) {}
-func (o *outputMock) ErrorWriter() io.Writer                               { return io.Discard }
-func (o *outputMock) StartOperation(status string)                         {}
-func (o *outputMock) EndOperation(success bool)                            {}
-func (o *outputMock) Result(result string)                                 {}
-func (o *outputMock) ResultWriter() io.Writer                              { return io.Discard }
-func (o *outputMock) Enabled(level int) bool                               { return true }
+func (o *outputMock) Infof(format string, args ...interface{})               {}
+func (o *outputMock) InfoWriter() io.Writer                                  { return io.Discard }
+func (o *outputMock) Warn(msg string)                                        {}
+func (o *outputMock) Warnf(format string, args ...interface{})               {}
+func (o *outputMock) WarnWriter() io.Writer                                  { return io.Discard }
+func (o *outputMock) Errorf(err error, format string, args ...interface{})   {}
+func (o *outputMock) ErrorWriter() io.Writer                                 { return io.Discard }
+func (o *outputMock) StartOperation(status string)                           {}
+func (o *outputMock) StartOperationWithProgress(gauge *output.ProgressGauge) {}
+func (o *outputMock) EndOperation(success bool)                              {}
+func (o *outputMock) Result(result string)                                   {}
+func (o *outputMock) ResultWriter() io.Writer                                { return io.Discard }
+func (o *outputMock) Enabled(level int) bool                                 { return true }

@@ -340,6 +340,51 @@ func TestInteractiveShellOutput(t *testing.T) {
 		}
 	})
 
+	t.Run("operations with progress", func(t *testing.T) {
+		out := bytes.Buffer{}
+		errOut := bytes.Buffer{}
+		gauge := &output.ProgressGauge{}
+		gauge.SetStatus("a message")
+		gauge.SetCapacity(10)
+		output := output.NewInteractiveShell(&out, &errOut, 0)
+
+		output.StartOperationWithProgress(gauge)
+		gauge.Set(1)
+		output.Info(gauge.String())
+		output.EndOperation(true)
+
+		output.StartOperationWithProgress(gauge)
+		gauge.Set(10)
+		output.Info(gauge.String())
+		output.EndOperation(true)
+
+		output.StartOperationWithProgress(gauge)
+		gauge.Set(1)
+		output.Error(nil, "an error")
+		output.EndOperation(false)
+
+		result := strings.TrimSuffix(errOut.String(), "\n")
+
+		outputLines := strings.Split(result, "\r")
+		assert.Greater(len(outputLines), 6)
+
+		expectedFinalOutputLines := []string{
+			termClearLine + " a message [===>                                1/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termReset + " a message [===>                                1/10] (time elapsed 00s) ",
+			termClearLine + " a message [==================================>10/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termReset + " a message [==================================>10/10] (time elapsed 00s) ",
+			termClearLine + termRed + "an error" + termReset,
+			" " + termRed + "✗" + termReset + " a message [===>                                1/10] (time elapsed 00s) ",
+		}
+		actualFinalOutputLines := strings.Split(result, "\n")
+		assert.Len(actualFinalOutputLines, len(expectedFinalOutputLines))
+		for i, line := range actualFinalOutputLines {
+			subLines := strings.Split(line, "\r")
+			finalLine := subLines[len(subLines)-1]
+			assert.Equal(expectedFinalOutputLines[i], finalLine)
+		}
+	})
+
 	t.Run("concurrent", func(t *testing.T) {
 		output := output.NewInteractiveShell(io.Discard, io.Discard, 0)
 

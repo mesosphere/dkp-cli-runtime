@@ -102,6 +102,16 @@ func (o *nonInteractiveShellOutput) StartOperation(status string) {
 	o.Infof(" • %s...", o.status)
 }
 
+func (o *nonInteractiveShellOutput) StartOperationWithProgress(gauge *ProgressGauge) {
+	o.EndOperation(true)
+
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
+	o.status = strings.TrimPrefix(gauge.String(), " ")
+	o.Infof(" • %s...", o.status)
+}
+
 func (o *nonInteractiveShellOutput) EndOperation(success bool) {
 	o.lock.Lock()
 	defer o.lock.Unlock()

@@ -34,6 +34,7 @@ type interactiveShellOutput struct {
 	// level is the V level of this instance
 	level         int
 	status        string
+	gauge         *ProgressGauge
 	keysAndValues []interface{}
 	lock          sync.Mutex
 }
@@ -105,21 +106,38 @@ func (o *interactiveShellOutput) StartOperation(status string) {
 	o.errOut.Start()
 }
 
+func (o *interactiveShellOutput) StartOperationWithProgress(gauge *ProgressGauge) {
+	o.EndOperation(true)
+
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
+	o.gauge = gauge
+	o.errOut.SetProgressGauge(gauge)
+	o.errOut.Start()
+}
+
 func (o *interactiveShellOutput) EndOperation(success bool) {
 	o.lock.Lock()
 	defer o.lock.Unlock()
 
-	if o.status == "" {
+	status := o.status
+	if o.gauge != nil {
+		status = strings.TrimPrefix(o.gauge.String(), " ")
+	}
+
+	if status == "" {
 		return
 	}
 	o.errOut.Stop()
 	fmt.Fprint(o.errOut, "\r")
 	if success {
-		fmt.Fprintf(o.errOut, " %s✓%s %s\n", termGreen, termReset, o.status)
+		fmt.Fprintf(o.errOut, " %s✓%s %s\n", termGreen, termReset, status)
 	} else {
-		fmt.Fprintf(o.errOut, " %s✗%s %s\n", termRed, termReset, o.status)
+		fmt.Fprintf(o.errOut, " %s✗%s %s\n", termRed, termReset, status)
 	}
 	o.status = ""
+	o.gauge = nil
 }
 
 func (o *interactiveShellOutput) Result(result string) {
