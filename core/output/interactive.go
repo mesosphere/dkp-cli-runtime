@@ -121,15 +121,16 @@ func (o *interactiveShellOutput) EndOperation(success bool) {
 	o.lock.Lock()
 	defer o.lock.Unlock()
 
-	if o.status == "" {
-		return
-	}
-	o.errOut.Stop()
-	fmt.Fprint(o.errOut, "\r")
 	status := o.status
 	if o.gauge != nil {
 		status = strings.TrimPrefix(o.gauge.String(), " ")
 	}
+
+	if status == "" {
+		return
+	}
+	o.errOut.Stop()
+	fmt.Fprint(o.errOut, "\r")
 	if success {
 		fmt.Fprintf(o.errOut, " %s✓%s %s\n", termGreen, termReset, status)
 	} else {
