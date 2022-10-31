@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-isatty v0.0.16
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	k8s.io/klog/v2 v2.80.1
 	sigs.k8s.io/yaml v1.3.0
 )
