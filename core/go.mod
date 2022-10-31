@@ -8,7 +8,7 @@ go 1.17
 require (
 	github.com/go-logr/logr v1.2.3
 	github.com/mattn/go-isatty v0.0.16
-	github.com/spf13/cobra v1.5.0
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.0
 	k8s.io/klog/v2 v2.80.1
