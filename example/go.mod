@@ -41,9 +41,11 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/jwalton/gchalk v1.3.0 // indirect
+	github.com/jwalton/go-supportscolor v1.1.0 // indirect
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
@@ -58,7 +60,7 @@ require (
 	go.starlark.net v0.0.0-20220817180228-f738f5508c12 // indirect
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sys v0.0.0-20220913175220-63ea55921009 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect

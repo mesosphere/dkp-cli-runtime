@@ -117,6 +117,20 @@ type Output interface {
 	//  output.EndOperation(true)
 	EndOperation(success bool)
 
+	// EndOperation communicates the end of a long-running operation, either because
+	// the operation completed successfully or failed (parameter success).
+	//
+	// Example:
+	//  output.StartOperation("installing package")
+	//  err := installPackage()
+	//  if err != nil {
+	//  	output.EndOperationWithStatus(output.Failure())
+	//  	output.Error(err, "")
+	//  	return
+	//  }
+	//  output.EndOperationWithStatus(output.Success())
+	EndOperationWithStatus(endStatus EndOperationStatus)
+
 	// Result outputs the result of an operation, e.g. a "get <something>" command.
 	//
 	// Example:

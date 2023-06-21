@@ -127,6 +127,17 @@ func (o *nonInteractiveShellOutput) EndOperation(success bool) {
 	o.status = ""
 }
 
+func (o *nonInteractiveShellOutput) EndOperationWithStatus(endStatus EndOperationStatus) {
+	o.lock.Lock()
+	defer o.lock.Unlock()
+
+	if o.status == "" {
+		return
+	}
+	endStatus.Fprintln(o.errOut, o.status)
+	o.status = ""
+}
+
 func (o *nonInteractiveShellOutput) Result(result string) {
 	fmt.Fprintln(o.out, result)
 }
