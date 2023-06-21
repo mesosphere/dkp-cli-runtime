@@ -23,6 +23,7 @@ func (o *noopOutput) ErrorWriter() io.Writer                               { ret
 func (o *noopOutput) StartOperation(status string)                         {}
 func (o *noopOutput) StartOperationWithProgress(gauge *ProgressGauge)      {}
 func (o *noopOutput) EndOperation(success bool)                            {}
+func (o *noopOutput) EndOperationWithStatus(status EndOperationStatus)     {}
 func (o *noopOutput) Result(result string)                                 {}
 func (o *noopOutput) ResultWriter() io.Writer                              { return io.Discard }
 func (o *noopOutput) WithValues(keysAndValues ...interface{}) Output       { return o }

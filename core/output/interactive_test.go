@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jwalton/gchalk"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/mesosphere/dkp-cli-runtime/core/output"
@@ -21,177 +22,191 @@ const (
 	termRed       = "\x1b[31m"
 	termGreen     = "\x1b[32m"
 	termYellow    = "\x1b[33m"
-	termReset     = "\x1b[0m"
+	termDefaultFg = "\x1b[39m"
 	termClearLine = "\x1b[2K"
 )
 
 func TestInteractiveShellOutput(t *testing.T) {
 	assert := assert.New(t)
 
+	origGchalkStderr := gchalk.Stderr
+	defer func() {
+		gchalk.Stderr = origGchalkStderr
+	}()
+	gchalk.Stderr = gchalk.New(
+		gchalk.ForceLevel(gchalk.LevelAnsi256),
+	)
+
 	t.Run("default", func(t *testing.T) {
 		out := bytes.Buffer{}
 		errOut := bytes.Buffer{}
-		output := output.NewInteractiveShell(&out, &errOut, 0)
+		tOutput := output.NewInteractiveShell(&out, &errOut, 0)
 
-		output.Info("info message")
+		tOutput.Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.Infof("info %s", "message")
+		tOutput.Infof("info %s", "message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		n, err := io.WriteString(output.InfoWriter(), "info message")
+		n, err := io.WriteString(tOutput.InfoWriter(), "info message")
 		assert.Equal(len("info message"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.Warn("warning message")
+		tOutput.Warn("warning message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.Warnf("warning %s", "message")
+		tOutput.Warnf("warning %s", "message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		n, err = io.WriteString(output.WarnWriter(), "warning message")
+		n, err = io.WriteString(tOutput.WarnWriter(), "warning message")
 		assert.Equal(len("warning message"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.Error(fmt.Errorf("error message"), "an error happened")
+		tOutput.Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened: error message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
-		output.Error(nil, "an error happened")
+		tOutput.Error(nil, "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
-		output.Error(fmt.Errorf("error message"), "")
+		tOutput.Error(fmt.Errorf("error message"), "")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"error message"+termReset+"\n", errOut.String())
-		errOut.Reset()
-
-		output.Errorf(fmt.Errorf("error message"), "an error %s", "happened")
-		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"error message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		n, err = io.WriteString(output.ErrorWriter(), "an error happened")
+		tOutput.Errorf(fmt.Errorf("error message"), "an error %s", "happened")
+		assert.Empty(out.String())
+		assert.Equal(termRed+"an error happened: error message"+termDefaultFg+"\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(tOutput.ErrorWriter(), "an error happened")
 		assert.Equal(len("an error happened"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.Result("a result")
+		tOutput.Result("a result")
 		assert.Equal("a result\n", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		n, err = io.WriteString(output.ResultWriter(), "a result")
+		n, err = io.WriteString(tOutput.ResultWriter(), "a result")
 		assert.Equal(len("a result"), n)
 		assert.NoError(err)
 		assert.Equal("a result", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		output.WithValues("key", "value").Info("info message")
+		tOutput.WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.WithValues("key", "value").Warn("warning message")
+		tOutput.WithValues("key", "value").Warn("warning message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 	})
 
 	t.Run("verbosity hidden", func(t *testing.T) {
 		out := bytes.Buffer{}
 		errOut := bytes.Buffer{}
-		output := output.NewInteractiveShell(&out, &errOut, 0)
+		tOutput := output.NewInteractiveShell(&out, &errOut, 0)
 
-		output.V(1).Info("info message")
+		tOutput.V(1).Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Infof("info %s", "message")
+		tOutput.V(1).Infof("info %s", "message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		_, err := io.WriteString(output.V(1).InfoWriter(), "info message")
+		_, err := io.WriteString(tOutput.V(1).InfoWriter(), "info message")
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Warn("warning message")
+		tOutput.V(1).Warn("warning message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Warnf("warning %s", "message")
+		tOutput.V(1).Warnf("warning %s", "message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		_, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
+		_, err = io.WriteString(tOutput.V(1).WarnWriter(), "warning message")
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Error(fmt.Errorf("error message"), "an error happened")
+		tOutput.V(1).Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Errorf(fmt.Errorf("error message"), "an error %s", "happened")
+		tOutput.V(1).Errorf(fmt.Errorf("error message"), "an error %s", "happened")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		_, err = io.WriteString(output.V(1).ErrorWriter(), "an error happened")
+		_, err = io.WriteString(tOutput.V(1).ErrorWriter(), "an error happened")
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Result("a result")
+		tOutput.V(1).Result("a result")
 		assert.Empty(out.String())
 		assert.Equal("", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		_, err = io.WriteString(output.V(1).ResultWriter(), "a result")
+		_, err = io.WriteString(tOutput.V(1).ResultWriter(), "a result")
 		assert.NoError(err)
 		assert.Equal("", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		output.V(1).WithValues("key", "value").Info("info message")
+		tOutput.V(1).WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).WithValues("key", "value").Warn("warning message")
+		tOutput.V(1).WithValues("key", "value").Warn("warning message")
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
 
-		output.V(1).StartOperation("working")
-		output.V(1).EndOperation(true)
+		tOutput.V(1).StartOperation("working")
+		tOutput.V(1).EndOperation(true)
+		assert.Empty(out.String())
+		assert.Equal("", errOut.String())
+		errOut.Reset()
+
+		tOutput.V(1).StartOperation("working")
+		tOutput.V(1).EndOperationWithStatus(output.Success())
 		assert.Empty(out.String())
 		assert.Equal("", errOut.String())
 		errOut.Reset()
@@ -200,125 +215,140 @@ func TestInteractiveShellOutput(t *testing.T) {
 	t.Run("verbosity", func(t *testing.T) {
 		out := bytes.Buffer{}
 		errOut := bytes.Buffer{}
-		output := output.NewInteractiveShell(&out, &errOut, 1)
+		tOutput := output.NewInteractiveShell(&out, &errOut, 1)
 
-		output.V(1).Info("info message")
+		tOutput.V(1).Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Infof("info %s", "message")
+		tOutput.V(1).Infof("info %s", "message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		n, err := io.WriteString(output.V(1).InfoWriter(), "info message")
+		n, err := io.WriteString(tOutput.V(1).InfoWriter(), "info message")
 		assert.Equal(len("info message"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Warn("warning message")
+		tOutput.V(1).Warn("warning message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Warnf("warning %s", "message")
+		tOutput.V(1).Warnf("warning %s", "message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		n, err = io.WriteString(output.V(1).WarnWriter(), "warning message")
+		n, err = io.WriteString(tOutput.V(1).WarnWriter(), "warning message")
 		assert.Equal(len("warning message"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Error(fmt.Errorf("error message"), "an error happened")
+		tOutput.V(1).Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened: error message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
-		output.V(1).Error(nil, "an error happened")
+		tOutput.V(1).Error(nil, "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
-		output.V(1).Error(fmt.Errorf("error message"), "")
+		tOutput.V(1).Error(fmt.Errorf("error message"), "")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"error message"+termReset+"\n", errOut.String())
-		errOut.Reset()
-
-		output.V(1).Errorf(fmt.Errorf("error message"), "an error %s", "happened")
-		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"error message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		n, err = io.WriteString(output.V(1).ErrorWriter(), "an error happened")
+		tOutput.V(1).Errorf(fmt.Errorf("error message"), "an error %s", "happened")
+		assert.Empty(out.String())
+		assert.Equal(termRed+"an error happened: error message"+termDefaultFg+"\n", errOut.String())
+		errOut.Reset()
+
+		n, err = io.WriteString(tOutput.V(1).ErrorWriter(), "an error happened")
 		assert.Equal(len("an error happened"), n)
 		assert.NoError(err)
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).Result("a result")
+		tOutput.V(1).Result("a result")
 		assert.Equal("a result\n", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		n, err = io.WriteString(output.V(1).ResultWriter(), "a result")
+		n, err = io.WriteString(tOutput.V(1).ResultWriter(), "a result")
 		assert.Equal(len("a result"), n)
 		assert.NoError(err)
 		assert.Equal("a result", out.String())
 		assert.Empty(errOut.String())
 		out.Reset()
 
-		output.WithValues("key", "value").Info("info message")
+		tOutput.WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).WithValues("key", "value").Info("info message")
+		tOutput.V(1).WithValues("key", "value").Info("info message")
 		assert.Empty(out.String())
 		assert.Equal("info message    key=value\n", errOut.String())
 		errOut.Reset()
 
-		output.WithValues("key", "value").Warn("warning message")
+		tOutput.WithValues("key", "value").Warn("warning message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).WithValues("key", "value").Warn("warning message")
+		tOutput.V(1).WithValues("key", "value").Warn("warning message")
 		assert.Empty(out.String())
-		assert.Equal(termYellow+"warning message    key=value"+termReset+"\n", errOut.String())
+		assert.Equal(termYellow+"warning message    key=value"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
+		tOutput.WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened: error message"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 
-		output.V(1).WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
+		tOutput.V(1).WithValues("key", "value").Error(fmt.Errorf("error message"), "an error happened")
 		assert.Empty(out.String())
-		assert.Equal(termRed+"an error happened: error message    key=value"+termReset+"\n", errOut.String())
+		assert.Equal(termRed+"an error happened: error message    key=value"+termDefaultFg+"\n", errOut.String())
 		errOut.Reset()
 	})
 
 	t.Run("operations", func(t *testing.T) {
 		out := bytes.Buffer{}
 		errOut := bytes.Buffer{}
-		output := output.NewInteractiveShell(&out, &errOut, 0)
+		tOutput := output.NewInteractiveShell(&out, &errOut, 0)
 
-		output.StartOperation("working")
+		tOutput.StartOperation("working")
 		time.Sleep(200 * time.Millisecond)
-		output.Info("a message")
+		tOutput.Info("a message")
 		time.Sleep(200 * time.Millisecond)
-		output.EndOperation(true)
-		output.StartOperation("working")
+		tOutput.EndOperation(true)
+		tOutput.StartOperation("working")
 		time.Sleep(200 * time.Millisecond)
-		output.Error(nil, "an error")
+		tOutput.Error(nil, "an error")
 		time.Sleep(200 * time.Millisecond)
-		output.EndOperation(false)
+		tOutput.EndOperation(false)
+		tOutput.StartOperation("working")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.Info("another message")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.EndOperationWithStatus(output.Success())
+		tOutput.StartOperation("working")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.Error(nil, "another error")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.EndOperationWithStatus(output.Failure())
+		tOutput.StartOperation("skipped")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.Warn("some warning")
+		time.Sleep(200 * time.Millisecond)
+		tOutput.EndOperationWithStatus(output.Skipped())
 
 		result := strings.TrimSuffix(errOut.String(), "\n")
 
@@ -327,9 +357,15 @@ func TestInteractiveShellOutput(t *testing.T) {
 
 		expectedFinalOutputLines := []string{
 			termClearLine + "a message",
-			" " + termGreen + "✓" + termReset + " working",
-			termClearLine + termRed + "an error" + termReset,
-			" " + termRed + "✗" + termReset + " working",
+			" " + termGreen + "✓" + termDefaultFg + " working",
+			termClearLine + termRed + "an error" + termDefaultFg,
+			" " + termRed + "✗" + termDefaultFg + " working",
+			termClearLine + "another message",
+			" " + termGreen + "✓" + termDefaultFg + " working",
+			termClearLine + termRed + "another error" + termDefaultFg,
+			" " + termRed + "✗" + termDefaultFg + " working",
+			termClearLine + termYellow + "some warning" + termDefaultFg,
+			" " + termYellow + "∅" + termDefaultFg + " skipped",
 		}
 		actualFinalOutputLines := strings.Split(result, "\n")
 		assert.Len(actualFinalOutputLines, len(expectedFinalOutputLines))
@@ -346,22 +382,32 @@ func TestInteractiveShellOutput(t *testing.T) {
 		gauge := &output.ProgressGauge{}
 		gauge.SetStatus("a message")
 		gauge.SetCapacity(10)
-		output := output.NewInteractiveShell(&out, &errOut, 0)
+		tOutput := output.NewInteractiveShell(&out, &errOut, 0)
 
-		output.StartOperationWithProgress(gauge)
+		tOutput.StartOperationWithProgress(gauge)
 		gauge.Set(1)
-		output.Info(gauge.String())
-		output.EndOperation(true)
+		tOutput.Info(gauge.String())
+		tOutput.EndOperation(true)
 
-		output.StartOperationWithProgress(gauge)
+		tOutput.StartOperationWithProgress(gauge)
 		gauge.Set(10)
-		output.Info(gauge.String())
-		output.EndOperation(true)
+		tOutput.Info(gauge.String())
+		tOutput.EndOperation(true)
 
-		output.StartOperationWithProgress(gauge)
+		tOutput.StartOperationWithProgress(gauge)
 		gauge.Set(1)
-		output.Error(nil, "an error")
-		output.EndOperation(false)
+		tOutput.Error(nil, "an error")
+		tOutput.EndOperation(false)
+
+		tOutput.StartOperationWithProgress(gauge)
+		gauge.Set(10)
+		tOutput.Info(gauge.String())
+		tOutput.EndOperationWithStatus(output.Success())
+
+		tOutput.StartOperationWithProgress(gauge)
+		gauge.Set(1)
+		tOutput.Error(nil, "another error")
+		tOutput.EndOperationWithStatus(output.Failure())
 
 		result := strings.TrimSuffix(errOut.String(), "\n")
 
@@ -370,11 +416,15 @@ func TestInteractiveShellOutput(t *testing.T) {
 
 		expectedFinalOutputLines := []string{
 			termClearLine + " a message [===>                                1/10] (time elapsed 00s) ",
-			" " + termGreen + "✓" + termReset + " a message [===>                                1/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termDefaultFg + " a message [===>                                1/10] (time elapsed 00s) ",
 			termClearLine + " a message [==================================>10/10] (time elapsed 00s) ",
-			" " + termGreen + "✓" + termReset + " a message [==================================>10/10] (time elapsed 00s) ",
-			termClearLine + termRed + "an error" + termReset,
-			" " + termRed + "✗" + termReset + " a message [===>                                1/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termDefaultFg + " a message [==================================>10/10] (time elapsed 00s) ",
+			termClearLine + termRed + "an error" + termDefaultFg,
+			" " + termRed + "✗" + termDefaultFg + " a message [===>                                1/10] (time elapsed 00s) ",
+			termClearLine + " a message [==================================>10/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termDefaultFg + " a message [==================================>10/10] (time elapsed 00s) ",
+			termClearLine + termRed + "another error" + termDefaultFg,
+			" " + termRed + "✗" + termDefaultFg + " a message [===>                                1/10] (time elapsed 00s) ",
 		}
 		actualFinalOutputLines := strings.Split(result, "\n")
 		assert.Len(actualFinalOutputLines, len(expectedFinalOutputLines))
@@ -386,17 +436,22 @@ func TestInteractiveShellOutput(t *testing.T) {
 	})
 
 	t.Run("concurrent", func(t *testing.T) {
-		output := output.NewInteractiveShell(io.Discard, io.Discard, 0)
+		tOutput := output.NewInteractiveShell(io.Discard, io.Discard, 0)
 
 		wg := sync.WaitGroup{}
 		doStuff := func() {
-			output.StartOperation("working")
-			output.Info("a message")
-			output.Warn("a warning")
-			output.EndOperation(true)
-			output.StartOperation("working")
-			output.Error(nil, "an error")
-			output.EndOperation(false)
+			tOutput.StartOperation("working")
+			tOutput.Info("a message")
+			tOutput.Warn("a warning")
+			tOutput.EndOperation(true)
+			tOutput.StartOperation("working")
+			tOutput.Error(nil, "an error")
+			tOutput.EndOperation(false)
+			tOutput.Warn("another warning")
+			tOutput.EndOperationWithStatus(output.Success())
+			tOutput.StartOperation("working again")
+			tOutput.Error(nil, "another error")
+			tOutput.EndOperationWithStatus(output.Failure())
 			wg.Done()
 		}
 
