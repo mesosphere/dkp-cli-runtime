@@ -103,6 +103,9 @@ type Output interface {
 	//  output.EndOperation(true)
 	StartOperationWithProgress(gauge *ProgressGauge)
 
+	// Deprecated: Use EndOperationWithStatus instead. EndOperation exists for historical compatibility
+	// and should not be used.
+	//
 	// EndOperation communicates the end of a long-running operation, either because
 	// the operation completed successfully or failed (parameter success).
 	//
