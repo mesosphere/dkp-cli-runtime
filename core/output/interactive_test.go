@@ -409,6 +409,14 @@ func TestInteractiveShellOutput(t *testing.T) {
 		tOutput.Error(nil, "another error")
 		tOutput.EndOperationWithStatus(output.Failure())
 
+		tOutput.StartOperationWithProgress(gauge)
+		gauge.Set(10)
+		tOutput.Info(gauge.String())
+		tOutput.EndOperationWithStatus(output.Success())
+
+		tOutput.StartOperation("without a gauge")
+		tOutput.EndOperationWithStatus(output.Success())
+
 		result := strings.TrimSuffix(errOut.String(), "\n")
 
 		outputLines := strings.Split(result, "\r")
@@ -425,6 +433,9 @@ func TestInteractiveShellOutput(t *testing.T) {
 			" " + termGreen + "✓" + termDefaultFg + " a message [==================================>10/10] (time elapsed 00s) ",
 			termClearLine + termRed + "another error" + termDefaultFg,
 			" " + termRed + "✗" + termDefaultFg + " a message [===>                                1/10] (time elapsed 00s) ",
+			termClearLine + " a message [==================================>10/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termDefaultFg + " a message [==================================>10/10] (time elapsed 00s) ",
+			" " + termGreen + "✓" + termDefaultFg + " without a gauge",
 		}
 		actualFinalOutputLines := strings.Split(result, "\n")
 		assert.Len(actualFinalOutputLines, len(expectedFinalOutputLines))

@@ -137,6 +137,7 @@ func (o *interactiveShellOutput) EndOperationWithStatus(endStatus EndOperationSt
 	endStatus.Fprintln(o.errOut, status)
 	o.status = ""
 	o.gauge = nil
+	o.errOut.SetProgressGauge(nil)
 }
 
 func (o *interactiveShellOutput) Result(result string) {
