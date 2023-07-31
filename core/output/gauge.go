@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -26,12 +27,15 @@ type ProgressGauge struct {
 	current   int
 	capacity  int
 	startTime time.Time
+	lock      sync.RWMutex
 }
 
 func (g *ProgressGauge) IsReady() bool {
 	if g == nil {
 		return false
 	}
+	g.lock.RLock()
+	defer g.lock.RUnlock()
 	if g.current < 0 {
 		return false
 	}
@@ -54,6 +58,8 @@ func (g *ProgressGauge) SetCapacity(capacity int) {
 	if capacity < 0 {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.capacity = capacity
 }
 
@@ -61,6 +67,8 @@ func (g *ProgressGauge) SetStatus(status string) {
 	if g == nil {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.status = status
 }
 
@@ -68,6 +76,8 @@ func (g *ProgressGauge) Set(current int) {
 	if g == nil {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.current = current
 }
 
@@ -75,6 +85,8 @@ func (g *ProgressGauge) Inc() {
 	if g == nil {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.current += 1
 }
 
@@ -82,6 +94,8 @@ func (g *ProgressGauge) Dec() {
 	if g == nil {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	g.current -= 1
 }
 
@@ -89,6 +103,8 @@ func (g *ProgressGauge) InitStartTime() {
 	if g == nil {
 		return
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	if g.startTime.IsZero() {
 		g.startTime = time.Now()
 	}
@@ -101,6 +117,9 @@ func (g *ProgressGauge) String() string {
 	if g == nil {
 		return ""
 	}
+
+	g.lock.RLock()
+	defer g.lock.RUnlock()
 	if g.startTime.IsZero() {
 		g.startTime = time.Now()
 	}
