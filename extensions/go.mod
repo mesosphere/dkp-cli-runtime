@@ -3,7 +3,7 @@
 
 module github.com/mesosphere/dkp-cli-runtime/extensions
 
-go 1.17
+go 1.23
 
 require (
 	github.com/spf13/cobra v1.5.0
