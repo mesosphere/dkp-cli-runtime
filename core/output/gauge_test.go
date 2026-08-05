@@ -46,6 +46,19 @@ func TestProgressGauge(t *testing.T) {
 	assert.Equal(t, " static-status", gauge.String())
 	gauge.Set(-10)
 	assert.Equal(t, " static-status", gauge.String())
+
+	// When trailing status is set, it should appear between progress and elapsed-time text.
+	gauge.Set(3)
+	gauge.SetTrailingStatus("context-foo")
+	assert.Equal(t,
+		" static-status [==========>                         3/10] context-foo (time elapsed 01s) ",
+		gauge.String())
+
+	// Empty trailing status should preserve existing output format.
+	gauge.SetTrailingStatus("")
+	assert.Equal(t,
+		" static-status [==========>                         3/10] (time elapsed 01s) ",
+		gauge.String())
 }
 
 func Test_humanReadableDuration(t *testing.T) {

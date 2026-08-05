@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install asdf and tools
-        uses: asdf-vm/actions/install@v1
+        uses: asdf-vm/actions/install@v4
 
       - name: Run unit tests
         run: make test
@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install asdf and tools
-        uses: asdf-vm/actions/install@v1
+        uses: asdf-vm/actions/install@v4
 
       - name: Lint code
         run: make lint
@@ -38,17 +38,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install asdf and tools
-        uses: asdf-vm/actions/install@v1
+        uses: asdf-vm/actions/install@v4
 
       - name: Setup python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
 
-      - uses: pre-commit/action@v2.0.3
+      - uses: pre-commit/action@v3.0.1
         with:
           extra_args: --all-files
         env:
