@@ -22,12 +22,19 @@ const maxProgressBarWidth = 40
 //	static-status [====>                                    1/10] (time elapsed 00s)
 //	static-status [============>                            3/10] (time elapsed 00s)
 //	static-status [=======================================>10/10] (time elapsed 00s)
+//
+// It can also include optional trailing context:
+//
+//	static-status [====>                                    1/10] optional-trailing-status (time elapsed 00s)
+//	static-status [============>                            3/10] optional-trailing-status (time elapsed 00s)
+//	static-status [=======================================>10/10] optional-trailing-status (time elapsed 00s)
 type ProgressGauge struct {
-	status    string
-	current   int
-	capacity  int
-	startTime time.Time
-	lock      sync.RWMutex
+	status         string
+	trailingStatus string
+	current        int
+	capacity       int
+	startTime      time.Time
+	lock           sync.RWMutex
 }
 
 func (g *ProgressGauge) IsReady() bool {
@@ -70,6 +77,15 @@ func (g *ProgressGauge) SetStatus(status string) {
 	g.lock.Lock()
 	defer g.lock.Unlock()
 	g.status = status
+}
+
+func (g *ProgressGauge) SetTrailingStatus(trailingStatus string) {
+	if g == nil {
+		return
+	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	g.trailingStatus = trailingStatus
 }
 
 func (g *ProgressGauge) Set(current int) {
@@ -145,11 +161,16 @@ func (g *ProgressGauge) String() string {
 	if spaces < 0 {
 		spaces = 0
 	}
-	return fmt.Sprintf(" %s [%s%s%s] (time elapsed %s) ",
+	progressOutput := fmt.Sprintf(" %s [%s%s%s]",
 		g.status,
 		progressStr,
 		strings.Repeat(" ", spaces),
-		ratio,
+		ratio)
+	if g.trailingStatus != "" {
+		progressOutput = fmt.Sprintf("%s %s", progressOutput, g.trailingStatus)
+	}
+	return fmt.Sprintf("%s (time elapsed %s) ",
+		progressOutput,
 		duration)
 }
 
